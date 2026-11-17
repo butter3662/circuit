@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none}
@@ -85,6 +86,15 @@ input[type=range]{width:100%;margin:8px 0 2px;accent-color:#3fb6ff}
 .modal ul{padding-left:18px;margin:4px 0}
 .eq{background:#0a0e14;border:1px solid #1f2a37;border-radius:8px;padding:6px 10px;margin:6px 0;font-family:"Times New Roman",serif;font-size:16px;color:#fff;overflow-x:auto;white-space:nowrap}
 .eq.in{display:inline-block;padding:1px 8px;margin:0}
+.ain{width:100%;background:#0d1117;border:1px solid #2a3646;border-radius:8px;color:#fff;padding:10px;font-size:15px;font-family:inherit;margin-top:8px}
+.crow{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px dashed #222d3b}
+.crow .nm{flex:1;min-width:0}
+.crow .nm b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crow .nm small{color:#6e7d91;font-size:11px}
+.crow .btn{flex:0 0 auto;min-width:0;padding:7px 10px}
+.amsg{font-size:13px;color:#ffc247;margin-top:10px;min-height:1em;line-height:1.5}
+.acctbtn{width:100%;text-align:left;display:flex;align-items:center;gap:8px}
+.acctbtn small{margin-left:auto;color:#8b9bb0}
 </style>
 </head>
 <body>
@@ -121,6 +131,8 @@ input[type=range]{width:100%;margin:8px 0 2px;accent-color:#3fb6ff}
 </div>
 
 <div class="ov" id="menu"><div class="sheet">
+  <h3>계정</h3>
+  <button class="btn pri acctbtn" id="bacct">계정·클라우드 저장<small id="acctst">로그인 안 됨</small></button>
   <h3>예제 회로</h3>
   <div class="g2" id="exlist"></div>
   <h3>시뮬레이션</h3>
@@ -140,6 +152,12 @@ input[type=range]{width:100%;margin:8px 0 2px;accent-color:#3fb6ff}
   <div class="btns"><button class="btn pri" id="bhelp">사용법·계산 원리</button><button class="btn danger" id="bclear">전체 지우기</button></div>
 </div></div>
 
+<div class="ov" id="acct"><div class="modal" style="width:min(460px,calc(100vw - 20px))">
+  <div style="display:flex;align-items:center"><h2>계정·클라우드 저장</h2><button class="hb" id="aclose" style="margin-left:auto;width:32px;height:32px" title="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width:16px;height:16px"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div id="acctbody"></div>
+  <div class="amsg" id="amsg"></div>
+</div></div>
+
 <div class="ov" id="help"><div class="modal">
   <div style="display:flex;align-items:center"><h2>사용법과 계산 원리</h2><button class="hb" id="hclose" style="margin-left:auto;width:32px;height:32px" title="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width:16px;height:16px"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
   <h4>사용법</h4>
@@ -149,7 +167,8 @@ input[type=range]{width:100%;margin:8px 0 2px;accent-color:#3fb6ff}
     <li><b>선택</b> 도구: 부품을 누르면 값 편집 창이 열린다. 부품을 끌면 이동하고, 선택된 부품의 끝점(a, b)을 끌면 길이·방향이 바뀐다. 스위치는 누를 때마다 열리고 닫힌다.</li>
     <li><b>변압기</b>: 끌어 놓은 선이 1차 코일(a → b)이 되고, 그 옆 2칸 떨어진 곳에 2차 코일(c → d)이 생긴다.</li>
     <li><b>층</b>: 왼쪽 위의 층 단추로 편집할 층을 고르고, 더하기 단추로 층을 추가한다. 서로 다른 층의 같은 격자점은 연결되지 않으며, <b>층 연결</b> 부품을 놓아야 이어진다. 층 연결은 현재 층과 바로 위층(맨 위층이면 아래층)을 잇고, 편집 창에서 이을 층을 바꿀 수 있다. 접지 기호는 층과 관계없이 모두 같은 노드이다.</li>
-    <li><b>3D</b> 단추: 모든 층을 쌓아 입체로 본다. 한 손가락으로 끌면 회전, 두 손가락이나 휠로 확대·이동한다. 3D 보기에서는 편집할 수 없다.</li>
+    <li><b>3D</b> 단추: 모든 층을 쌓아 입체로 본다. 빈 곳을 한 손가락으로 끌면 회전하고(잡은 곳이 손을 따라 움직인다), 두 손가락이나 휠로 확대·이동한다. 3D에서도 2D와 똑같이 부품을 놓고 옮기고 편집할 수 있으며, 편집은 파랗게 표시된 현재 층 위에서 한다. 층은 왼쪽 위 단추로 바꾼다.</li>
+    <li><b>계정·클라우드 저장</b>: 메뉴에서 로그인하면 회로를 이름을 붙여 계정에 저장하고, 다른 기기에서 불러올 수 있다. 카나미치·SEED 10K와 같은 계정이다.</li>
     <li>단축키: Space 재생/정지, Ctrl+Z 실행 취소, Delete 삭제, R 회전, F 방향 뒤집기, Esc 선택 해제.</li>
     <li>회로는 이 브라우저에 자동 저장된다.</li>
   </ul>
@@ -469,8 +488,12 @@ const cam={x:0,y:0,s:1};
 const HZ=4*G;
 const cam3={th:-.6,ph:.95,s:.7,ox:0,oy:0,cx:0,cy:0,cz:0};
 function resize(){const r=cv.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2.5);W=Math.max(1,r.width);H=Math.max(1,r.height);cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
-const w2s=(gx,gy)=>[gx*G*cam.s+cam.x,gy*G*cam.s+cam.y];
-const s2g=(sx,sy)=>[(sx-cam.x)/(G*cam.s),(sy-cam.y)/(G*cam.s)];
+function w2s(gx,gy){if(mode3d)return P3(gx*G,gy*G,curZ*HZ);return[gx*G*cam.s+cam.x,gy*G*cam.s+cam.y];}
+function s2g(sx,sy){
+  if(mode3d){const ct=Math.cos(cam3.th),st=Math.sin(cam3.th),cp=Math.cos(cam3.ph),k=cam3.s,a=k*ct,b=k*st*cp,c=-k*st,d=k*ct*cp,o=P3(0,0,curZ*HZ),X=sx-o[0],Y=sy-o[1],det=a*d-b*c;return[(d*X-c*Y)/det/G,(-b*X+a*Y)/det/G];}
+  return[(sx-cam.x)/(G*cam.s),(sy-cam.y)/(G*cam.s)];
+}
+const sc=()=>mode3d?cam3.s:cam.s;
 const C={bg:'#0d1117',dot:'#2b3645',wire:'#c5d0dc',comp:'#e6edf3',sel:'#3fb6ff',lab:'#9fb0c3',conv:'#ffc247',elec:'#56ccf2',amm:'#7ee787',vol:'#ffa657'};
 function hexA(h,a){const n=parseInt(h.slice(1),16);return`rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;}
 function line(c,x0,y0,x1,y1){c.beginPath();c.moveTo(x0,y0);c.lineTo(x1,y1);c.stroke();}
@@ -686,15 +709,7 @@ function draw2D(){
   }
   drawLayer(curZ,w2s,cam.s,{});
   drawLabels();
-  if(sel&&!T[sel.t].one){
-    const hs=[[sel.a,'a',true],[sel.b,'b',true]];
-    if(sel.t==='transformer'){const[c,d]=tfCD(sel);hs.push([c,'c',false],[d,'d',false]);}
-    for(const[p,l,drag]of hs){
-      const[x,y]=w2s(p[0],p[1]);
-      ctx.fillStyle=drag?C.sel:'#6e7d91';ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,drag?7:6,0,7);ctx.fill();ctx.stroke();
-      ctx.fillStyle='#04121f';ctx.font=font(10,800);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(l,x,y+.5);
-    }
-  }
+  if(sel&&!T[sel.t].one)drawHandles();
   if(act&&act.k==='place'){
     const A=w2s(act.s[0],act.s[1]);
     ctx.strokeStyle=C.sel;ctx.lineWidth=2;ctx.beginPath();ctx.arc(A[0],A[1],8,0,7);ctx.stroke();
@@ -703,6 +718,15 @@ function draw2D(){
       ctx.globalAlpha=.65;drawEl(ctx,{t:tool,a:act.s,b:act.e,c:tool==='diode'?'si':'red',on:true,I:0,br:0,s:{}},A,B,cam.s,{ghost:true});ctx.globalAlpha=1;
       ctx.beginPath();ctx.arc(B[0],B[1],8,0,7);ctx.stroke();
     }
+  }
+}
+function drawHandles(){
+  const hs=[[sel.a,'a',true],[sel.b,'b',true]];
+  if(sel.t==='transformer'){const[c,d]=tfCD(sel);hs.push([c,'c',false],[d,'d',false]);}
+  for(const[p,l,drag]of hs){
+    const[x,y]=w2s(p[0],p[1]);
+    ctx.fillStyle=drag?C.sel:'#6e7d91';ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,drag?7:6,0,7);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#04121f';ctx.font=font(10,800);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(l,x,y+.5);
   }
 }
 /* ---------- 3D ---------- */
@@ -737,7 +761,17 @@ function draw3D(){
       ctx.strokeStyle='rgba(63,182,255,.6)';ctx.lineWidth=1;line(ctx,p0[0],p0[1],p1[0],p1[1]);
     }
   }
+  if(sel&&onLayer(sel,curZ)){
+    aff(curZ);ctx.strokeStyle='rgba(63,182,255,.35)';ctx.fillStyle='rgba(63,182,255,.3)';ctx.lineWidth=.55*G;ctx.lineCap='round';
+    if(T[sel.t].one){ctx.beginPath();ctx.arc(sel.a[0]*G,sel.a[1]*G+(sel.t==='ground'?.3*G:0),.5*G,0,7);ctx.fill();}
+    else{line(ctx,sel.a[0]*G,sel.a[1]*G,sel.b[0]*G,sel.b[1]*G);if(sel.t==='transformer'){const[c,d]=tfCD(sel);line(ctx,c[0]*G,c[1]*G,d[0]*G,d[1]*G);}}
+  }
+  if(act&&act.k==='place'){
+    aff(curZ);ctx.strokeStyle=C.sel;ctx.lineWidth=3;ctx.beginPath();ctx.arc(act.s[0]*G,act.s[1]*G,9,0,7);ctx.stroke();
+    if(act.moved&&!same(act.s,act.e)&&!T[tool].one){ctx.globalAlpha=.65;drawEl(ctx,{t:tool,a:act.s,b:act.e,c:tool==='diode'?'si':'red',on:true,I:0,br:0,s:{}},[act.s[0]*G,act.s[1]*G],[act.e[0]*G,act.e[1]*G],1,{ghost:true});ctx.globalAlpha=1;ctx.beginPath();ctx.arc(act.e[0]*G,act.e[1]*G,9,0,7);ctx.stroke();}
+  }
   ctx.setTransform(dpr,0,0,dpr,0,0);
+  if(sel&&onLayer(sel,curZ)&&!T[sel.t].one)drawHandles();
   for(const e of els)if(e.t==='ammeter'||e.t==='voltmeter'){
     const p=P3((e.a[0]+e.b[0])/2*G,(e.a[1]+e.b[1])/2*G,e.z*HZ);
     pill(p[0],p[1]-Math.max(16,28*cam3.s),meterText(e),e.t==='ammeter'?C.amm:C.vol,undefined,undefined,12);
@@ -750,7 +784,7 @@ let act=null;const ptrs=new Map();let lastPT='mouse';
 function pos(ev){const r=cv.getBoundingClientRect();return{x:ev.clientX-r.left,y:ev.clientY-r.top};}
 function segDist(px,py,A,B){const dx=B[0]-A[0],dy=B[1]-A[1],L2=dx*dx+dy*dy;let t=L2?((px-A[0])*dx+(py-A[1])*dy)/L2:0;t=Math.max(0,Math.min(1,t));return Math.hypot(px-(A[0]+t*dx),py-(A[1]+t*dy));}
 function elDist(e,px,py){
-  const A=w2s(e.a[0],e.a[1]),B=w2s(e.b[0],e.b[1]),g=G*cam.s;
+  const A=w2s(e.a[0],e.a[1]),B=w2s(e.b[0],e.b[1]),g=G*sc();
   if(e.t==='ground')return Math.min(Math.hypot(px-A[0],py-A[1]),segDist(px,py,A,[A[0],A[1]+.66*g]))-3;
   if(e.t==='via')return Math.hypot(px-A[0],py-A[1])-.22*g;
   if(e.t==='transformer'){const[c,d]=tfCD(e).map(p=>w2s(p[0],p[1]));return Math.min(segDist(px,py,A,B),segDist(px,py,c,d),segDist(px,py,[(A[0]+B[0])/2,(A[1]+B[1])/2],[(c[0]+d[0])/2,(c[1]+d[1])/2]));}
@@ -762,7 +796,7 @@ function hitEl(px,py){
   return best;
 }
 function hitBody(px,py){
-  const g=G*cam.s;
+  const g=G*sc();
   for(let i=els.length-1;i>=0;i--){
     const e=els[i];if(e.t==='wire'||!onLayer(e,curZ))continue;
     if(T[e.t].one){if(elDist(e,px,py)<8)return e;continue;}
@@ -786,7 +820,6 @@ cv.addEventListener('pointerdown',ev=>{
     act={k:'pinch',d0:Math.max(10,dist2(p1,p2)),m0:mid2(p1,p2),cam0:{...cam},c30:{...cam3}};return;
   }
   if(ptrs.size>2)return;
-  if(mode3d){act={k:'rot',p0:p,th0:cam3.th,ph0:cam3.ph,sy:p.y>=cam3.oy?-1:1};return;}
   const sn=snapG(p);
   if(tool==='select'){
     if(sel&&!T[sel.t].one){
@@ -795,7 +828,7 @@ cv.addEventListener('pointerdown',ev=>{
     }
     const h=hitEl(p.x,p.y);
     if(h){if(h!==sel)select(h);act={k:'move',e:h,g0:sn,a0:[...h.a],b0:[...h.b],snap0:snapshot(),moved:false};return;}
-    select(null);act={k:'pan',p0:p,cam0:{...cam}};return;
+    select(null);act=mode3d?{k:'rot',p0:p,th0:cam3.th,ph0:cam3.ph,sy:p.y>=cam3.oy?-1:1}:{k:'pan',p0:p,cam0:{...cam}};return;
   }
   if(tool==='delete'){act={k:'del'};return;}
   act={k:'place',s:sn,e:sn,p0:p,moved:false};
@@ -887,7 +920,7 @@ function showHint(txt,ms){const h=$('hint');h.textContent=txt;h.style.opacity=1;
 function setTool(t){
   tool=t;for(const b of toolsEl.children)b.classList.toggle('on',b.dataset.t===t);
   cv.style.cursor=t==='select'?'default':'crosshair';
-  if(t==='select')showHint('부품을 눌러 선택·편집하고, 끌어서 옮긴다. 빈 곳을 끌면 화면이 움직인다');
+  if(t==='select')showHint(mode3d?'부품을 눌러 선택·편집하고, 끌어서 옮긴다. 빈 곳을 끌면 회전한다':'부품을 눌러 선택·편집하고, 끌어서 옮긴다. 빈 곳을 끌면 화면이 움직인다');
   else if(t==='delete')showHint('지울 부품을 누른다');
   else if(t==='ground')showHint('접지: 격자점을 누르면 놓인다. 모든 접지는 0 V인 같은 노드이다');
   else if(t==='via')showHint(`층 연결: 격자점을 누르면 ${curZ+1}층과 ${curZ+1<nL?curZ+2:curZ}층이 그 점에서 이어진다`);
@@ -934,7 +967,7 @@ const NOTES={
   via:'두 층의 같은 격자점을 저항 0으로 잇는다.'
 };
 function buildPanel(){
-  if(!sel||mode3d){panel.classList.add('hide');return;}
+  if(!sel){panel.classList.add('hide');return;}
   panel.classList.remove('hide');
   const d=T[sel.t];$('pt').textContent=d.nm;
   $('pchip').textContent=nL>1?(sel.t==='via'?`${sel.z+1}층 – ${sel.z2+1}층`:`${sel.z+1}층`):'';
@@ -1000,7 +1033,7 @@ function readouts(e){
 }
 let lastPU=0;
 function updatePanel(force){
-  if(!sel||mode3d)return;const now=performance.now();if(!force&&now-lastPU<120)return;lastPU=now;
+  if(!sel)return;const now=performance.now();if(!force&&now-lastPU<120)return;lastPU=now;
   $('pread').innerHTML=readouts(sel).map(([k,v])=>`<div class="kv"><span>${k}</span><b>${v}</b></div>`).join('');
   drawScope();
 }
@@ -1047,13 +1080,14 @@ $('bundo').onclick=doUndo;
 $('zin').onclick=()=>zoomAt(W/2,H/2,1.25);$('zout').onclick=()=>zoomAt(W/2,H/2,.8);$('zfit').onclick=()=>mode3d?fit3d():fit();
 function set3d(on){
   mode3d=on;const b=$('b3d');b.textContent=on?'2D':'3D';b.classList.toggle('on',on);b.title=on?'2D 편집으로 돌아가기':'3D 보기';
-  toolsEl.classList.toggle('off',on);
-  if(on){select(null);act=null;fit3d();showHint('3D 보기: 한 손가락으로 끌면 회전, 두 손가락이나 휠로 확대·이동한다',4500);}
-  else{buildPanel();showHint(`${curZ+1}층 편집`);}
+  act=null;
+  if(on){fit3d();showHint(`3D: 빈 곳을 끌면 회전, 두 손가락·휠로 확대한다. 편집은 파랗게 표시된 ${curZ+1}층에서 하며, 층은 왼쪽 위 단추로 바꾼다`,6000);}
+  else showHint(`${curZ+1}층 편집`);
+  buildPanel();
 }
 $('b3d').onclick=()=>set3d(!mode3d);
 const menu=$('menu'),help=$('help');
-function closeOv(){menu.classList.remove('show');help.classList.remove('show');}
+function closeOv(){menu.classList.remove('show');help.classList.remove('show');$('acct').classList.remove('show');}
 $('bmenu').onclick=()=>menu.classList.add('show');
 menu.onclick=ev=>{if(ev.target===menu)closeOv();};
 help.onclick=ev=>{if(ev.target===help)closeOv();};
@@ -1073,6 +1107,80 @@ window.addEventListener('keydown',ev=>{
   else if(ev.key==='r'||ev.key==='R'){if(sel)panelAct('rot');}
   else if(ev.key==='f'||ev.key==='F'){if(sel)panelAct('flip');}
 });
+
+/* ================= 계정·클라우드 저장 (Supabase) ================= */
+const SB_URL='https://ictjkqbbcaigdvlysdaw.supabase.co',SB_KEY='sb_publishable_C7jZEKJn_nF2Y3Ngq5f80Q_RA5Wrfux';
+let sb=null,user=null,cloudId=null,cloudName='',cloudList=[],delArm=null,busy=false;
+try{if(window.supabase)sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});}catch(e){sb=null;}
+const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function amsg(t,err){const m=$('amsg');m.style.color=err?'#ff9b94':'#ffc247';m.textContent=t||'';}
+function errText(e){const m=(e&&e.message)||String(e);if(/Failed to fetch|NetworkError|Load failed/i.test(m))return'서버에 연결하지 못했다. 인터넷 연결을 확인하라 (claude.ai 미리보기 페이지에서는 외부 연결이 막혀 있으니 GitHub 사이트에서 써라)';if(/Invalid login credentials/i.test(m))return'이메일 또는 비밀번호가 틀렸다';if(/Email not confirmed/i.test(m))return'아직 이메일 인증을 하지 않았다. 받은 메일의 링크를 먼저 눌러라';if(/already registered/i.test(m))return'이미 가입된 이메일이다. 로그인하라';if(/Password should be/i.test(m))return'비밀번호는 6자 이상이어야 한다';return m;}
+function updAcctBtn(){$('acctst').textContent=user?(user.email||'로그인됨'):'로그인 안 됨';}
+const fmtDate=iso=>{const d=new Date(iso),z=n=>String(n).padStart(2,'0');return`${String(d.getFullYear()).slice(2)}/${z(d.getMonth()+1)}/${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`;};
+function defName(){const d=new Date(),z=n=>String(n).padStart(2,'0');return`회로 ${z(d.getMonth()+1)}/${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`;}
+function renderAcct(){
+  const b=$('acctbody');
+  if(!sb){b.innerHTML='<p class="note" style="font-size:13px">로그인 기능을 불러오지 못했다. 인터넷 연결을 확인하고 새로고침하라.</p>';return;}
+  if(!user){
+    b.innerHTML=`<p class="note" style="font-size:13px">카나미치·SEED 10K와 같은 계정으로 로그인한다. 로그인하면 만든 회로를 계정에 저장하고 다른 기기에서 불러올 수 있다.</p>
+    <input class="ain" id="aem" type="email" autocomplete="email" placeholder="이메일">
+    <input class="ain" id="apw" type="password" autocomplete="current-password" placeholder="비밀번호 (6자 이상)">
+    <div class="btns"><button class="btn pri" data-act="in">로그인</button><button class="btn" data-act="up">회원가입</button></div>`;
+    return;
+  }
+  const rows=cloudList.length?cloudList.map(c=>`<div class="crow"><div class="nm"><b>${esc(c.name)}${c.id===cloudId?' <span style="color:#3fb6ff;font-size:11px">현재</span>':''}</b><small>${fmtDate(c.updated_at)}</small></div><button class="btn" data-act="load" data-id="${c.id}">불러오기</button><button class="btn danger" data-act="del" data-id="${c.id}">${delArm===c.id?'정말 삭제':'삭제'}</button></div>`).join(''):'<p class="note" style="font-size:13px">아직 저장한 회로가 없다.</p>';
+  b.innerHTML=`<div class="kv"><span>로그인 계정</span><b>${esc(user.email||'')}</b></div>
+  ${cloudId?`<div class="btns"><button class="btn pri" data-act="over">「${esc(cloudName)}」에 덮어쓰기</button></div>`:''}
+  <input class="ain" id="anm" maxlength="60" placeholder="새로 저장할 이름" value="${esc(defName())}">
+  <div class="btns"><button class="btn${cloudId?'':' pri'}" data-act="new">새 이름으로 저장</button></div>
+  <h3 style="font-size:12px;color:#8b9bb0;margin:16px 0 2px">저장한 회로</h3>${rows}
+  <div class="btns"><button class="btn" data-act="out">로그아웃</button></div>`;
+}
+async function refreshList(){
+  const{data,error}=await sb.from('circuit_saves').select('id,name,updated_at').order('updated_at',{ascending:false});
+  if(error){amsg('목록을 불러오지 못했다: '+errText(error),true);return;}
+  cloudList=data||[];if(cloudId&&!cloudList.some(c=>c.id===cloudId))cloudId=null;renderAcct();
+}
+const cloudData=()=>({v:2,nL,els:els.map(ser)});
+async function acctAct(a,id){
+  if(busy)return;busy=true;amsg('처리 중…');
+  try{
+    if(a==='in'||a==='up'){
+      const email=$('aem').value.trim(),password=$('apw').value;
+      if(!email||!password){amsg('이메일과 비밀번호를 모두 입력하라',true);return;}
+      if(a==='in'){const{error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;amsg('로그인했다');}
+      else{const{data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});if(error)throw error;amsg(data.session?'가입하고 로그인했다':'확인 메일을 보냈다. 메일의 링크를 누른 뒤 로그인하라');}
+    }else if(a==='out'){await sb.auth.signOut();cloudId=null;amsg('로그아웃했다');}
+    else if(a==='new'){
+      const name=($('anm').value||'').trim().slice(0,60)||defName();
+      const{data,error}=await sb.from('circuit_saves').insert({name,data:cloudData()}).select('id,name').single();if(error)throw error;
+      cloudId=data.id;cloudName=data.name;amsg(`「${name}」 이름으로 저장했다`);await refreshList();
+    }else if(a==='over'){
+      const{error}=await sb.from('circuit_saves').update({data:cloudData(),updated_at:new Date().toISOString()}).eq('id',cloudId);if(error)throw error;
+      amsg(`「${cloudName}」에 덮어썼다`);await refreshList();
+    }else if(a==='load'){
+      const{data,error}=await sb.from('circuit_saves').select('id,name,data').eq('id',id).single();if(error)throw error;
+      pushUndo();els=fromList((data.data&&data.data.els)||[]);nL=Math.max(1,(data.data&&data.data.nL)||1);curZ=0;fixLayers();normalize();resetState();select(null);
+      if(mode3d)fit3d();else fit();changed();cloudId=data.id;cloudName=data.name;amsg('');closeOv();showHint(`「${data.name}」 회로를 불러왔다`);
+    }else if(a==='del'){
+      if(delArm!==id){delArm=id;amsg('한 번 더 누르면 삭제된다');renderAcct();return;}
+      const{error}=await sb.from('circuit_saves').delete().eq('id',id);if(error)throw error;
+      delArm=null;if(cloudId===id)cloudId=null;amsg('삭제했다');await refreshList();
+    }
+  }catch(e){amsg(errText(e),true);}
+  finally{busy=false;if(a!=='del')delArm=null;renderAcct();}
+}
+$('acctbody').addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(b)acctAct(b.dataset.act,b.dataset.id);});
+$('acctbody').addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.id==='apw')acctAct('in');});
+$('bacct').onclick=()=>{menu.classList.remove('show');$('acct').classList.add('show');amsg('');renderAcct();if(user)refreshList();};
+$('aclose').onclick=closeOv;
+$('acct').onclick=ev=>{if(ev.target===$('acct'))closeOv();};
+async function initAuth(){
+  renderAcct();updAcctBtn();if(!sb)return;
+  try{const{data}=await sb.auth.getSession();user=data.session?data.session.user:null;}catch(e){user=null;}
+  sb.auth.onAuthStateChange((ev,ses)=>{const nu=ses?ses.user:null;const changedUser=(nu&&nu.id)!==(user&&user.id);user=nu;if(!user){cloudList=[];cloudId=null;}updAcctBtn();if(changedUser){renderAcct();if(user)setTimeout(refreshList,0);}});
+  updAcctBtn();renderAcct();
+}
 
 /* ================= 경고 ================= */
 let lastW='';
@@ -1131,6 +1239,7 @@ setRun(true);
 if(load()){normalize();fit();}else{els=EX[0].d.map(([t,a,b,p])=>newEl(t,a,b,p));normalize();fixLayers();fit();}
 buildLayers();
 setTool('select');
+initAuth();
 setTimeout(()=>showHint('아래에서 부품을 골라 격자점 사이를 끌면 회로가 만들어진다. 메뉴에 예제와 계산 원리가 있다',5000),400);
 requestAnimationFrame(frame);
 })();

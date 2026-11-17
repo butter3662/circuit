@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16243a"/><stop offset="1" stop-color="#0a0f18"/></linearGradient>
+    <linearGradient id="bolt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd257"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff9a3d" stop-opacity=".45"/><stop offset="1" stop-color="#ff9a3d" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g fill="#2b3a52"><circle cx="96" cy="96" r="4"/><circle cx="416" cy="96" r="4"/><circle cx="96" cy="416" r="4"/><circle cx="416" cy="416" r="4"/><circle cx="256" cy="72" r="3"/><circle cx="256" cy="440" r="3"/></g>
+  <g fill="none" stroke="#9cc9ff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 228 V128 H196 l12 -24 l24 48 l24 -48 l24 48 l24 -48 l12 24 H384 V384 H128 V276"/>
+  </g>
+  <g stroke="#e8f1ff" stroke-linecap="round">
+    <line x1="80" y1="228" x2="176" y2="228" stroke-width="13"/>
+    <line x1="104" y1="276" x2="152" y2="276" stroke-width="24"/>
+  </g>
+  <text x="62" y="214" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="40" fill="#ff7b72">+</text>
+  
+  <g fill="#ffc247"><circle cx="384" cy="190" r="11"/><circle cx="384" cy="270" r="11"/><circle cx="330" cy="384" r="11"/><circle cx="240" cy="384" r="11"/><circle cx="160" cy="384" r="11"/></g>
+  <circle cx="276" cy="262" r="120" fill="url(#glow)"/>
+  <path d="M296 160 L216 276 H266 L248 362 L336 238 H284 Z" fill="url(#bolt)" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+</svg>

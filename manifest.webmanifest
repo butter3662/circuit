@@ -1,0 +1,17 @@
+{
+  "name": "회로 만들기 시뮬레이터",
+  "short_name": "회로",
+  "description": "부품을 끌어다 놓아 회로를 만들고 전압·전류를 실시간으로 계산하는 시뮬레이터",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

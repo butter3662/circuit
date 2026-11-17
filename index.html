@@ -786,7 +786,7 @@ cv.addEventListener('pointerdown',ev=>{
     act={k:'pinch',d0:Math.max(10,dist2(p1,p2)),m0:mid2(p1,p2),cam0:{...cam},c30:{...cam3}};return;
   }
   if(ptrs.size>2)return;
-  if(mode3d){act={k:'rot',p0:p,th0:cam3.th,ph0:cam3.ph};return;}
+  if(mode3d){act={k:'rot',p0:p,th0:cam3.th,ph0:cam3.ph,sy:p.y>=cam3.oy?-1:1};return;}
   const sn=snapG(p);
   if(tool==='select'){
     if(sel&&!T[sel.t].one){
@@ -812,7 +812,7 @@ cv.addEventListener('pointermove',ev=>{
     const wx=(act.m0.x-act.cam0.x)/act.cam0.s,wy=(act.m0.y-act.cam0.y)/act.cam0.s;
     cam.s=s;cam.x=m.x-wx*s;cam.y=m.y-wy*s;return;
   }
-  if(act.k==='rot'){cam3.th=act.th0+(p.x-act.p0.x)*.008;cam3.ph=Math.max(0,Math.min(1.45,act.ph0-(p.y-act.p0.y)*.006));return;}
+  if(act.k==='rot'){cam3.th=act.th0+act.sy*(p.x-act.p0.x)*.008;cam3.ph=Math.max(0,Math.min(1.45,act.ph0-(p.y-act.p0.y)*.006));return;}
   const sn=snapG(p);
   if(act.k==='place'){if(Math.hypot(p.x-act.p0.x,p.y-act.p0.y)>8)act.moved=true;act.e=sn;}
   else if(act.k==='end'){const other=act.end==='a'?act.e.b:act.e.a;if(!same(sn,other)&&!same(sn,act.e[act.end])){if(!act.moved){pushUndo(act.snap0);act.moved=true;}act.e[act.end]=sn;}}

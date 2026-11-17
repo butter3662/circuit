@@ -186,6 +186,13 @@ input[type=range]{width:100%;margin:8px 0 2px;accent-color:#3fb6ff}
     <li><b>교류 전원</b>: 전지와 같은 모형에서 기전력만 시간에 따라 변한다.
       <div class="eq"><i>ε</i>(<i>t</i>) = <i>V</i><sub>p</sub> sin(2π<i>ft</i>)</div>
       <i>V</i><sub>p</sub>는 진폭(최댓값), <i>f</i>는 주파수(Hz), <i>t</i>는 시뮬레이션 시각(s)이다. 실효값은 <i>V</i><sub>p</sub>/√2이다.</li>
+    <li><b>유도 코일</b>: 감은 수 <i>N</i>인 코일을 지나는 자속 <i>Φ</i>가 변하면 패러데이 법칙에 따라 기전력이 생긴다.
+      <div class="eq"><i>ε</i> = −<i>N</i> d<i>Φ</i>/d<i>t</i></div>
+      <i>ε</i>는 코일 안 a → b 방향을 양으로 잡은 유도 기전력, <i>Φ</i>는 한 바퀴를 지나는 자속(Wb)이며, <i>Φ</i>의 양의 방향은 a → b로 감긴 코일에 오른손 법칙을 적용해 정한다(음의 부호는 렌츠 법칙). 두 가지 운동을 고를 수 있다.
+      <div class="eq">일정 변화: <i>Φ</i>(<i>t</i>) = <i>kt</i> → <i>ε</i> = −<i>Nk</i>&nbsp;&nbsp;&nbsp; 주기 운동: <i>Φ</i>(<i>t</i>) = <i>Φ</i><sub>max</sub> cos(2π<i>ft</i>) → <i>ε</i> = 2π<i>f N Φ</i><sub>max</sub> sin(2π<i>ft</i>)</div>
+      <i>k</i>는 일정한 자속 변화율 d<i>Φ</i>/d<i>t</i>(Wb/s), <i>Φ</i><sub>max</sub>는 최대 자속, <i>f</i>는 자석이 왕복하는(또는 코일이 회전하는) 진동수이다. 코일 자체의 저항 <i>r</i>와 자체 유도 계수 <i>L</i>을 넣으면 단자 사이의 관계는 다음과 같고, 후진 오일러법으로 이산화한다.
+      <div class="eq"><i>V</i><sub>b</sub> − <i>V</i><sub>a</sub> = <i>ε</i> − <i>rI</i> − <i>L</i> d<i>I</i>/d<i>t</i></div>
+      <i>I</i>는 코일 안에서 a → b로 흐르는 유도 전류이다. 유도 전류가 만드는 자속이 다시 <i>Φ</i>에 더해지는 효과는 <i>L</i>에 포함된다.</li>
     <li><b>전류원</b>: 양단 전압과 관계없이 소자 안에서 a → b로 일정한 전류 <i>I</i>를 흘린다. 열린 회로에 연결하면 전압이 한없이 커지므로 경고가 뜬다.</li>
     <li><b>축전기</b>: <i>i</i> = <i>C</i> d<i>v</i>/d<i>t</i>를 후진 오일러법으로 이산화한다.
       <div class="eq"><i>I</i><sub>n</sub> = <i>C</i> ( <i>v</i><sub>n</sub> − <i>v</i><sub>n−1</sub> ) / Δ<i>t</i></div>
@@ -243,6 +250,7 @@ const T={
   diode:{nm:'다이오드',bl:.7},
   capacitor:{nm:'축전기',bl:.4,val:100e-6,unit:'F',min:1e-12,max:10,lab:'전기 용량 C'},
   inductor:{nm:'코일',bl:1.2,val:1,unit:'H',min:1e-6,max:1000,lab:'자체 유도 계수 L'},
+  emcoil:{nm:'유도 코일',bl:1.2},
   transformer:{nm:'변압기',bl:1.2,val:1,unit:'H',min:1e-3,max:100,lab:'1차 자체 유도 계수 L<sub>1</sub>'},
   ammeter:{nm:'전류계',bl:.8},
   voltmeter:{nm:'전압계',bl:.8},
@@ -250,12 +258,13 @@ const T={
   via:{nm:'층 연결',bl:0,one:true},
   delete:{nm:'지우개'}
 };
-const PARTS=['wire','battery','acsource','csource','resistor','bulb','switch','fuse','led','diode','capacitor','inductor','transformer','ammeter','voltmeter','ground','via'];
+const PARTS=['wire','battery','acsource','csource','resistor','bulb','switch','fuse','led','diode','capacitor','inductor','emcoil','transformer','ammeter','voltmeter','ground','via'];
 let uid=0;
 function newEl(t,a,b,p){
   const d=T[t];
-  const e={id:++uid,t,z:0,z2:1,a:[a[0],a[1]],b:[b[0],b[1]],v:d.val!==undefined?d.val:0,r:.01,P:2,c:t==='diode'?'si':'red',on:true,f:60,nr:.5,kc:.99,Ir:1,mode:'auto',
+  const e={id:++uid,t,z:0,z2:1,a:[a[0],a[1]],b:[b[0],b[1]],v:d.val!==undefined?d.val:0,r:.01,P:2,c:t==='diode'?'si':'red',on:true,f:60,nr:.5,kc:.99,Ir:1,mode:'auto',em:'per',turns:100,dphi:.03,pm:.005,Lc:0,
     s:{vc:0,il:0,vd:0,i1:0,i2:0,blown:false},ph:0,ph2:0,I:0,I2:0,V:0,V2:0,br:0,rv:0,ri:0,rv2:0,ri2:0};
+  if(t==='emcoil'){e.f=2;e.r=1;}
   if(p)for(const k in p)if(p[k]!==undefined)e[k]=p[k];
   if(t==='ground'||t==='via')e.b=[e.a[0],e.a[1]];
   return e;
@@ -297,7 +306,10 @@ function pnjlim(vn,vo,vt,vc){
   return vn;
 }
 const sim={V:null,keyV:new Map(),vmin:0,vmax:1,ok:true,tauR:.3,hasAC:false,acF:0,blown:''};
-const emfAt=(e,t)=>e.t==='acsource'?e.v*Math.sin(2*Math.PI*e.f*t):e.v;
+const fluxAt=(e,t)=>e.em==='lin'?e.dphi*t:e.pm*Math.cos(2*Math.PI*e.f*t);
+const dfluxAt=(e,t)=>e.em==='lin'?e.dphi:-e.pm*2*Math.PI*e.f*Math.sin(2*Math.PI*e.f*t);
+const emfAt=(e,t)=>e.t==='acsource'?e.v*Math.sin(2*Math.PI*e.f*t):e.t==='emcoil'?-e.turns*dfluxAt(e,t):e.v;
+const emG=(e,h)=>1/(Math.max(e.r,1e-3)+e.Lc/h);
 function tfp(e,h){const L1=e.v,L2=e.nr*e.nr*L1,M=e.kc*e.nr*L1,det=L1*L2-M*M;return{g11:h*L2/det,g22:h*L1/det,g12:-h*M/det};}
 function solve(els,h,commit,t,last){
   const par=new Map();
@@ -313,7 +325,7 @@ function solve(els,h,commit,t,last){
   for(const e of els)if(conducts(e))for(const[p,q]of pairs(e)){const a=fi(e.N[p]),b=fi(e.N[q]);if(a!==b)ip[a]=b;}
   const gnd=new Map();
   if(par.has('GND')){const g=nodeOf('GND');gnd.set(fi(g),g);}
-  for(const e of els)if(e.t==='battery'||e.t==='acsource'){const r=fi(e.N[0]);if(!gnd.has(r))gnd.set(r,e.N[0]);}
+  for(const e of els)if(e.t==='battery'||e.t==='acsource'||e.t==='emcoil'){const r=fi(e.N[0]);if(!gnd.has(r))gnd.set(r,e.N[0]);}
   for(let i=0;i<N;i++){const r=fi(i);if(!gnd.has(r))gnd.set(r,i);}
   const isG=new Uint8Array(N);for(const g of gnd.values())isG[g]=1;
   const mi=new Int32Array(N);let M=0;for(let i=0;i<N;i++)mi[i]=isG[i]?-1:M++;
@@ -338,6 +350,7 @@ function solve(els,h,commit,t,last){
         case'ammeter':sg(i,j,1/RAMM);break;
         case'battery':case'acsource':{const g=1/Math.max(e.r,1e-6);sg(i,j,g);si(i,j,g*emfAt(e,t));break;}
         case'csource':si(i,j,e.v);break;
+        case'emcoil':{const g=emG(e,h);sg(i,j,g);si(i,j,g*(emfAt(e,t)+e.Lc/h*e.s.il));break;}
         case'capacitor':{const g=e.v/h;sg(i,j,g);si(i,j,-g*e.s.vc);break;}
         case'inductor':{const g=h/e.v;sg(i,j,g);si(i,j,e.s.il);break;}
         case'transformer':{const p=tfp(e,h),k=e.N[2],l=e.N[3];sx(i,j,i,j,p.g11);sx(i,j,k,l,p.g12);sx(k,l,i,j,p.g12);sx(k,l,k,l,p.g22);si(i,j,e.s.i1);si(k,l,e.s.i2);break;}
@@ -362,6 +375,7 @@ function solve(els,h,commit,t,last){
       case'ammeter':I=v/RAMM;break;
       case'battery':case'acsource':I=(emfAt(e,t)+v)/Math.max(e.r,1e-6);break;
       case'csource':I=e.v;break;
+      case'emcoil':I=emG(e,h)*(emfAt(e,t)+v+e.Lc/h*e.s.il);break;
       case'capacitor':I=(e.v/h)*(v-e.s.vc);break;
       case'inductor':I=e.s.il+(h/e.v)*v;break;
       case'transformer':{const p=tfp(e,h),v2=ok?V[e.N[2]]-V[e.N[3]]:0;e.V2=v2;I=e.s.i1+p.g11*v+p.g12*v2;e.I2=e.s.i2+p.g12*v+p.g22*v2;break;}
@@ -374,7 +388,7 @@ function solve(els,h,commit,t,last){
     const a=Math.min(1,h/sim.tauR);
     for(const e of els){
       if(e.t==='capacitor')e.s.vc=e.V;
-      else if(e.t==='inductor')e.s.il=e.I;
+      else if(e.t==='inductor'||e.t==='emcoil')e.s.il=e.I;
       else if(e.t==='transformer'){e.s.i1=e.I;e.s.i2=e.I2;e.rv2+=(e.V2*e.V2-e.rv2)*a;e.ri2+=(e.I2*e.I2-e.ri2)*a;}
       else if(e.t==='fuse'&&!e.s.blown&&Math.abs(e.I)>e.Ir){e.s.blown=true;sim.blown=`퓨즈가 끊어졌다: ${fmt(Math.abs(e.I),'A')}가 흘러 정격 전류 ${fmt(e.Ir,'A',true)}보다 컸다`;}
       e.rv+=(e.V*e.V-e.rv)*a;e.ri+=(e.I*e.I-e.ri)*a;
@@ -429,7 +443,7 @@ let els=[],sel=null,tool='select',running=true,speed=1,simT=0,nL=1,curZ=0,mode3d
 const opt={dots:true,elec:false,vcol:true,lab:true,ghost:true};
 let undo=[],hist=[],lastSampleT=-1e9;
 const KEY='circuit-sim-v2';
-const ser=e=>({t:e.t,z:e.z,z2:e.z2,a:e.a,b:e.b,v:e.v,r:e.r,P:e.P,c:e.c,on:e.on,f:e.f,nr:e.nr,kc:e.kc,Ir:e.Ir,mode:e.mode});
+const ser=e=>({t:e.t,z:e.z,z2:e.z2,a:e.a,b:e.b,v:e.v,r:e.r,P:e.P,c:e.c,on:e.on,f:e.f,nr:e.nr,kc:e.kc,Ir:e.Ir,mode:e.mode,em:e.em,turns:e.turns,dphi:e.dphi,pm:e.pm,Lc:e.Lc});
 const snapshot=()=>JSON.stringify({nL,els:els.map(e=>Object.assign(ser(e),{s:e.s}))});
 function fromList(list){return list.filter(o=>o&&PARTS.includes(o.t)).map(o=>{const p=Object.assign({},o);delete p.t;delete p.a;delete p.b;if(o.s)p.s=Object.assign({vc:0,il:0,vd:0,i1:0,i2:0,blown:false},o.s);return newEl(o.t,o.a,o.b,p);});}
 function restore(str){const d=JSON.parse(str);if(Array.isArray(d)){els=fromList(d);nL=1;}else{els=fromList(d.els||[]);nL=Math.max(1,d.nL||1);}fixLayers();}
@@ -474,10 +488,11 @@ const EX=[
  {nm:'휘트스톤 브리지',d:[['battery',[2,9],[2,5],{v:6}],['wire',[2,5],[2,2]],['wire',[2,9],[2,10]],['wire',[2,2],[6,2]],['wire',[6,2],[11,2]],['wire',[2,10],[6,10]],['wire',[6,10],[11,10]],['resistor',[6,2],[6,6],{v:100}],['resistor',[6,6],[6,10],{v:200}],['resistor',[11,2],[11,6],{v:150}],['resistor',[11,6],[11,10],{v:300}],['ammeter',[6,6],[11,6]]]},
  {nm:'변압기(강압)',d:[['acsource',[2,7],[2,3],{v:14.142,f:60}],['wire',[2,3],[2,2]],['wire',[2,2],[8,2]],['wire',[8,2],[8,3]],['wire',[2,7],[2,8]],['wire',[2,8],[8,8]],['wire',[8,8],[8,7]],['transformer',[8,7],[8,3],{v:1,nr:.5,kc:.99}],['wire',[-2,2],[2,2]],['wire',[-2,2],[-2,3]],['voltmeter',[-2,3],[-2,7]],['wire',[-2,7],[-2,8]],['wire',[-2,8],[2,8]],['wire',[10,3],[10,2]],['wire',[10,2],[11,2]],['ammeter',[11,2],[13,2]],['wire',[13,2],[14,2]],['wire',[14,2],[14,3]],['resistor',[14,3],[14,7],{v:100}],['wire',[14,7],[14,8]],['wire',[14,8],[10,8]],['wire',[10,8],[10,7]],['wire',[14,2],[17,2]],['wire',[17,2],[17,3]],['voltmeter',[17,3],[17,7]],['wire',[17,7],[17,8]],['wire',[17,8],[14,8]]]},
  {nm:'반파 정류·평활',d:[['acsource',[2,7],[2,3],{v:10,f:60}],['wire',[2,3],[2,2]],['diode',[2,2],[6,2]],['wire',[6,2],[8,2]],['wire',[8,2],[8,3]],['capacitor',[8,3],[8,7],{v:470e-6}],['wire',[8,7],[8,8]],['wire',[8,8],[2,8]],['wire',[2,8],[2,7]],['wire',[8,2],[11,2]],['wire',[11,2],[11,3]],['resistor',[11,3],[11,7],{v:1000}],['wire',[11,7],[11,8]],['wire',[11,8],[8,8]],['wire',[11,2],[14,2]],['wire',[14,2],[14,3]],['voltmeter',[14,3],[14,7],{mode:'dc'}],['wire',[14,7],[14,8]],['wire',[14,8],[11,8]]]},
+ {nm:'전자기 유도',d:[['emcoil',[2,7],[2,3],{em:'per',turns:100,pm:.005,f:2,r:1}],['wire',[2,3],[2,2]],['wire',[2,2],[5,2]],['ammeter',[5,2],[7,2],{mode:'dc'}],['wire',[7,2],[9,2]],['wire',[9,2],[9,3]],['resistor',[9,3],[9,7],{v:10}],['wire',[9,7],[9,8]],['wire',[9,8],[2,8]],['wire',[2,8],[2,7]],['wire',[9,2],[12,2]],['wire',[12,2],[12,3]],['voltmeter',[12,3],[12,7],{mode:'dc'}],['wire',[12,7],[12,8]],['wire',[12,8],[9,8]],['emcoil',[19,7],[19,3],{em:'lin',turns:100,dphi:-.03,r:1}],['wire',[19,3],[19,2]],['wire',[19,2],[23,2]],['wire',[23,2],[23,3]],['bulb',[23,3],[23,7],{v:20,P:.5}],['wire',[23,7],[23,8]],['wire',[23,8],[19,8]],['wire',[19,8],[19,7]]]},
  {nm:'2층 회로',d:[['battery',[2,7],[2,3],{v:6}],['wire',[2,3],[2,2]],['switch',[2,2],[5,2],{on:true}],['resistor',[5,2],[9,2],{v:220}],['via',[9,2],[9,2],{z:0,z2:1}],['wire',[2,7],[2,8]],['wire',[2,8],[9,8]],['via',[9,8],[9,8],{z:0,z2:1}],['ground',[2,8],[2,8]],['ammeter',[9,2],[12,2],{z:1}],['led',[12,2],[12,5],{z:1,c:'green'}],['wire',[12,5],[12,8],{z:1}],['wire',[12,8],[9,8],{z:1}]]},
  {nm:'빈 회로',d:[]}
 ];
-const EXNOTE=['','스위치를 눌러 전구 하나를 끄고 켜 보라.','왼쪽 스위치를 닫으면 충전, 열고 오른쪽 스위치를 닫으면 방전된다. τ = RC = 1 s','LED 방향을 뒤집으면 전류가 흐르지 않는다.','스위치를 닫으면 전류가 서서히 증가한다.','네 저항의 비가 맞으면 가운데 전류계가 0을 가리킨다. 아래 오른쪽 저항값을 바꿔 보라.','실효값 10 V, 60 Hz를 권선비 1 : 0.5로 낮춘다. 계기 값이 정착하는 데 몇 주기가 걸린다.','파형은 속도 0.01×에서 축전기를 선택해 그래프로 보라.','1층과 2층이 층 연결 두 개로 이어져 있다. 3D 단추로 쌓인 모습을 보라.',''];
+const EXNOTE=['','스위치를 눌러 전구 하나를 끄고 켜 보라.','왼쪽 스위치를 닫으면 충전, 열고 오른쪽 스위치를 닫으면 방전된다. τ = RC = 1 s','LED 방향을 뒤집으면 전류가 흐르지 않는다.','스위치를 닫으면 전류가 서서히 증가한다.','네 저항의 비가 맞으면 가운데 전류계가 0을 가리킨다. 아래 오른쪽 저항값을 바꿔 보라.','실효값 10 V, 60 Hz를 권선비 1 : 0.5로 낮춘다. 계기 값이 정착하는 데 몇 주기가 걸린다.','파형은 속도 0.01×에서 축전기를 선택해 그래프로 보라.','왼쪽은 자석이 2 Hz로 왕복해 기전력이 주기적으로 바뀌고, 오른쪽은 자속이 일정하게 줄어 일정한 기전력으로 전구가 켜진다. 그래프는 코일을 선택해 보라.','1층과 2층이 층 연결 두 개로 이어져 있다. 3D 단추로 쌓인 모습을 보라.',''];
 function loadEx(i){pushUndo();els=EX[i].d.map(([t,a,b,p])=>newEl(t,a,b,p));normalize();nL=1;curZ=0;fixLayers();resetState();select(null);if(mode3d)fit3d();else fit();changed();closeOv();if(EXNOTE[i])showHint(EXNOTE[i],6500);}
 function resetState(){simT=0;hist=[];sim.blown='';for(const e of els){e.s={vc:0,il:0,vd:0,i1:0,i2:0,blown:false};e.ph=0;e.ph2=0;e.rv=e.ri=e.rv2=e.ri2=0;}}
 
@@ -577,6 +592,14 @@ const SYM={
     c.save();c.lineWidth=lw*.9;const m=D/2,q=.07*g;line(c,-bl/2,m-q,bl/2,m-q);line(c,-bl/2,m+q,bl/2,m+q);c.restore();
     c.fillStyle=C.comp;const pr=Math.max(1.6,.07*g);c.beginPath();c.arc(-bl/2-.04*g,-.2*g,pr,0,7);c.fill();c.beginPath();c.arc(-bl/2-.04*g,D+.2*g,pr,0,7);c.fill();
   },
+  emcoil(c,e,bl,g,th,lw,o){
+    const n=4,w=bl/n,r=w/2;c.beginPath();c.moveTo(-bl/2,0);for(let i=0;i<n;i++)c.arc(-bl/2+r+i*w,0,r,Math.PI,0,false);c.stroke();
+    const x=e.em==='per'&&!o.icon&&!o.ghost?.3*bl*Math.cos(2*Math.PI*e.f*simT):0,mw=.6*g,mh=.22*g,y=.42*g;
+    c.save();c.lineWidth=Math.max(1,lw*.5);c.fillStyle='#e5534b';c.fillRect(x-mw/2,y-mh/2,mw/2,mh);c.fillStyle='#4d8bff';c.fillRect(x,y-mh/2,mw/2,mh);c.strokeStyle='#0d1117';c.strokeRect(x-mw/2,y-mh/2,mw,mh);
+    c.fillStyle='#fff';c.font=font(Math.max(6,.17*g),800);c.textAlign='center';c.textBaseline='middle';up(c,th,x-mw/4,y+.5,'N');up(c,th,x+mw/4,y+.5,'S');
+    if(e.em==='lin'&&!o.icon){c.strokeStyle='#ffc247';c.lineWidth=lw*.8;arrow(c,-.25*g,.7*g,.25*g,.7*g,.1*g);}
+    c.restore();pm(c,th,g,bl/2-.1*g,1);
+  },
   ammeter(c,e,bl,g,th,lw){meter(c,e,bl,g,th,lw,'A',C.amm);},
   voltmeter(c,e,bl,g,th,lw){meter(c,e,bl,g,th,lw,'V',C.vol);}
 };
@@ -617,6 +640,7 @@ function valueText(e){
     case'fuse':return e.s.blown?'끊어짐':fmt(e.Ir,'A',true);
     case'capacitor':return fmt(e.v,'F',true);
     case'inductor':return fmt(e.v,'H',true);
+    case'emcoil':return e.em==='per'?`N=${e.turns} · ${fmt(e.f,'Hz',true)}`:`N=${e.turns} · ${fmt(e.dphi,'Wb/s',true)}`;
     case'led':return DIO[e.c].nm;
   }
   return'';
@@ -653,6 +677,9 @@ function drawLabels(){
       const cx=(A[0]+B[0])/2+off[0]*g/2,cy=(A[1]+B[1])/2+off[1]*g/2;
       nx=Math.abs(ux)>Math.abs(uy)?Math.sign(ux):0;ny=nx?0:Math.sign(uy);
       x=cx+nx*(bl/2+.15*g);y=cy+ny*(bl/2+.15*g);
+    }else if(e.t==='emcoil'){
+      const L=Math.hypot(B[0]-A[0],B[1]-A[1])||1;nx=(B[1]-A[1])/L;ny=-(B[0]-A[0])/L;
+      x=(A[0]+B[0])/2+nx*.5*g;y=(A[1]+B[1])/2+ny*.5*g;
     }else{if(!txt)continue;[x,y,nx,ny]=labelPos(A,B,.55*g);}
     ctx.font=font(Math.max(10,.3*g),600);ctx.fillStyle=e.t==='fuse'&&e.s.blown?'#ff8a80':C.lab;
     if(Math.abs(nx)>Math.abs(ny)){ctx.textAlign=nx>0?'left':'right';ctx.textBaseline='middle';}
@@ -897,7 +924,7 @@ function fit(){
 }
 
 /* ================= 도구 막대 ================= */
-const TOOLS=['select','wire','battery','acsource','csource','resistor','bulb','switch','fuse','led','diode','capacitor','inductor','transformer','ammeter','voltmeter','ground','via','delete'];
+const TOOLS=['select','wire','battery','acsource','csource','resistor','bulb','switch','fuse','led','diode','capacitor','inductor','emcoil','transformer','ammeter','voltmeter','ground','via','delete'];
 function makeIcon(t){
   const c=document.createElement('canvas');const d=Math.min(window.devicePixelRatio||1,3);c.width=44*d;c.height=26*d;
   const x=c.getContext('2d');x.scale(d,d);x.strokeStyle=C.comp;x.fillStyle=C.comp;x.lineWidth=1.8;x.lineCap='round';x.lineJoin='round';
@@ -963,6 +990,7 @@ const NOTES={
   led:'a가 애노드(+), b가 캐소드(−)이다.',diode:'a가 애노드(+), b가 캐소드(−)이다.',
   ammeter:'a가 +단자이다. a로 들어가 b로 나오는 전류를 양수로 표시한다.',voltmeter:'a가 +단자이다. V<sub>a</sub> − V<sub>b</sub>를 표시한다.',
   transformer:'a, b는 1차 코일, c, d는 2차 코일의 끝이다. 점(•)이 찍힌 a와 c가 같은 극성이다. v<sub>1</sub> = V<sub>a</sub> − V<sub>b</sub>, v<sub>2</sub> = V<sub>c</sub> − V<sub>d</sub>, i<sub>1</sub>은 a → b, i<sub>2</sub>는 c → d 방향 전류이다.',
+  emcoil:'기전력의 양의 방향을 코일 안 a → b로 잡고, 자속 Φ의 양의 방향은 이 방향으로 감긴 코일에 오른손 법칙을 적용해 정한다. 그러면 ε = −N dΦ/dt이고, ε > 0이면 b가 a보다 전위가 높다(b가 +극).',
   ground:'모든 접지 기호는 층과 관계없이 하나의 노드이며, 그 전위를 0 V로 둔다.',
   via:'두 층의 같은 격자점을 저항 0으로 잇는다.'
 };
@@ -976,6 +1004,13 @@ function buildPanel(){
   if(d.val!==undefined)h+=numRow('iv',d.lab,sel.v,d.unit)+`<input id="sv" type="range" min="0" max="1000" step="1" value="${toSl(sel.v,d)}">`;
   if(sel.t==='acsource')h+=numRow('if','주파수 f',sel.f,'Hz');
   if(sel.t==='battery'||sel.t==='acsource')h+=numRow('ir','내부 저항 r',sel.r,'Ω');
+  if(sel.t==='emcoil'){
+    h+=`<label class="row"><span>운동 방식</span><select id="iem"><option value="per"${sel.em==='per'?' selected':''}>주기 운동 Φ = Φ<sub>max</sub>cos 2πft</option><option value="lin"${sel.em==='lin'?' selected':''}>자속이 일정하게 변함 (ΔΦ/Δt 일정)</option></select></label>`;
+    h+=numRow('iN','감은 수 N',sel.turns,'회');
+    if(sel.em==='per')h+=numRow('ipm','최대 자속 Φ<sub>max</sub>',sel.pm,'Wb')+numRow('if','진동수 f',sel.f,'Hz');
+    else h+=numRow('idp','자속 변화율 dΦ/dt (음수 가능)',sel.dphi,'Wb/s');
+    h+=numRow('ir','코일 저항 r',sel.r,'Ω')+numRow('iL','코일 자체 유도 계수 L (0 가능)',sel.Lc,'H');
+  }
   if(sel.t==='bulb')h+=numRow('ip','정격 전력 P<sub>정격</sub>',sel.P,'W');
   if(sel.t==='fuse')h+=numRow('iI','정격 전류',sel.Ir,'A')+(sel.s.blown?'<div class="btns"><button class="btn pri" id="ifix">퓨즈 교체</button></div>':'');
   if(sel.t==='transformer')h+=numRow('in','권선비 N<sub>2</sub>/N<sub>1</sub>',sel.nr,'')+numRow('ik','결합 계수 k (0.5 ~ 0.9999)',sel.kc,'');
@@ -983,7 +1018,7 @@ function buildPanel(){
   if(sel.t==='switch')h+=`<div class="btns"><button class="btn pri" id="itog">${sel.on?'스위치 열기':'스위치 닫기'}</button></div>`;
   if(sel.t==='ammeter'||sel.t==='voltmeter')h+=`<label class="row"><span>표시 값</span><select id="im"><option value="auto"${sel.mode==='auto'?' selected':''}>자동 (교류가 있으면 실효값)</option><option value="dc"${sel.mode==='dc'?' selected':''}>순간값</option><option value="rms"${sel.mode==='rms'?' selected':''}>실효값</option></select></label>`;
   if(sel.t==='via'&&nL>1)h+=`<label class="row"><span>이을 층 (${sel.z+1}층과)</span><select id="iz">${[...Array(nL).keys()].filter(z=>z!==sel.z).map(z=>`<option value="${z}"${z===sel.z2?' selected':''}>${z+1}층</option>`).join('')}</select></label>`;
-  if(/id="i[vfrpInk]"/.test(h))h+='<div class="note">값은 4.7k, 100u(=100 µ), 2.2m처럼 접두어로도 입력할 수 있다.</div>';
+  if(/id="i(v|f|r|p|I|n|k|N|pm|dp|L)"/.test(h))h+='<div class="note">값은 4.7k, 100u(=100 µ), 2.2m처럼 접두어로도 입력할 수 있다.</div>';
   $('pedit').innerHTML=h;
   const iv=$('iv'),sv=$('sv');
   if(iv){
@@ -993,7 +1028,10 @@ function buildPanel(){
     sv.oninput=()=>{sel.v=fromSl(+sv.value,d);iv.value=fmtIn(sel.v);changed();};
   }
   const bind=(id,key,min,max)=>{const el=$(id);if(!el)return;el.onfocus=()=>pushUndo();el.onchange=()=>{const x=parseSI(el.value);if(isFinite(x)&&x>0){sel[key]=Math.max(min,Math.min(max,x));changed();}el.value=fmtIn(sel[key]);};};
-  bind('ir','r',1e-6,1e6);bind('ip','P',1e-3,1e4);bind('if','f',.01,1e4);bind('iI','Ir',1e-3,1e3);bind('in','nr',.01,100);bind('ik','kc',.5,.9999);
+  bind('ir','r',1e-6,1e6);bind('ip','P',1e-3,1e4);bind('if','f',.01,1e4);bind('iI','Ir',1e-3,1e3);bind('in','nr',.01,100);bind('ik','kc',.5,.9999);bind('iN','turns',1,1e5);bind('ipm','pm',1e-9,100);
+  const bindZ=(id,key,min,max,neg)=>{const el=$(id);if(!el)return;el.onfocus=()=>pushUndo();el.onchange=()=>{const x=parseSI(el.value);if(isFinite(x)&&(neg||x>=0)){sel[key]=Math.max(min,Math.min(max,x));changed();}el.value=fmtIn(sel[key]);};};
+  bindZ('idp','dphi',-1e4,1e4,true);bindZ('iL','Lc',0,1e3,false);
+  if($('iem'))$('iem').onchange=ev=>{pushUndo();sel.em=ev.target.value;sel.s.il=0;changed();buildPanel();};
   const sl=(id,fn)=>{if($(id))$(id).onchange=ev=>{pushUndo();fn(ev.target.value);changed();buildPanel();};};
   sl('ic',v=>{sel.c=v;sel.s.vd=0;});sl('im',v=>{sel.mode=v;});sl('iz',v=>{sel.z2=+v;});
   if($('itog'))$('itog').onclick=()=>{pushUndo();sel.on=!sel.on;changed();buildPanel();};
@@ -1001,7 +1039,7 @@ function buildPanel(){
   updatePanel(true);
 }
 function quant(e){
-  if(e.t==='battery'||e.t==='acsource')return{V:-e.V,I:e.I,lv:'단자 전압',li:'I',uv:'V',ui:'A'};
+  if(e.t==='battery'||e.t==='acsource'||e.t==='emcoil')return{V:-e.V,I:e.I,lv:'단자 전압',li:'I',uv:'V',ui:'A'};
   if(e.t==='transformer')return{V:e.V,I:e.V2,lv:'1차 v₁',li:'2차 v₂',uv:'V',ui:'V'};
   return{V:e.V,I:e.I,lv:'V',li:'I',uv:'V',ui:'A'};
 }
@@ -1016,6 +1054,10 @@ function readouts(e){
     case'fuse':r.push(['상태',e.s.blown?'끊어짐':'정상'],['전류 I',fmt(I,'A')],['정격 전류',fmt(e.Ir,'A')]);break;
     case'battery':r.push(['단자 전압 V<sub>+</sub> − V<sub>−</sub>',fmt(-V,'V')],['전류 I (전지 내부 −극 → +극)',fmt(I,'A')],['외부로 공급하는 전력 (V<sub>+</sub> − V<sub>−</sub>)I',fmt(-V*I,'W')],['내부 저항의 열손실 I²r',fmt(I*I*e.r,'W')]);break;
     case'acsource':r.push(['순간 기전력 ε(t)',fmt(emfAt(e,simT),'V')],['단자 전압 V<sub>+</sub> − V<sub>−</sub>',fmt(-V,'V')],['전류 I (내부 −극 → +극)',fmt(I,'A')],['기전력 실효값 V<sub>p</sub>/√2',fmt(e.v/Math.SQRT2,'V')],['전류 실효값',fmt(rms(e.ri),'A')]);break;
+    case'emcoil':{
+      r.push(['현재 자속 Φ(t)',fmt(fluxAt(e,simT),'Wb')],['자속 변화율 dΦ/dt',fmt(dfluxAt(e,simT),'Wb/s')],['유도 기전력 ε = −N dΦ/dt',fmt(emfAt(e,simT),'V')],['단자 전압 V<sub>b</sub> − V<sub>a</sub>',fmt(-V,'V')],['전류 I (코일 안 a → b)',fmt(I,'A')],['외부로 공급하는 전력',fmt(-V*I,'W')]);
+      if(e.em==='per')r.push(['기전력 최댓값 2πf N Φ<sub>max</sub>',fmt(2*Math.PI*e.f*e.turns*e.pm,'V')],['기전력 실효값',fmt(2*Math.PI*e.f*e.turns*e.pm/Math.SQRT2,'V')]);
+      break;}
     case'csource':r.push(['전류 I (a → b, 고정)',fmt(I,'A')],['양단 전압 '+SUBV,fmt(V,'V')],['외부로 공급하는 전력 −(V<sub>a</sub> − V<sub>b</sub>)I',fmt(-V*I,'W')]);break;
     case'resistor':r.push(['전압 '+SUBV,fmt(V,'V')],['전류 I',fmt(I,'A')],['소비 전력 P = VI',fmt(V*I,'W')]);if(sim.hasAC)r.push(['전압 실효값',fmt(rms(e.rv),'V')],['평균 소비 전력 (근사 V<sub>rms</sub>I<sub>rms</sub>)',fmt(rms(e.rv)*rms(e.ri),'W')]);break;
     case'bulb':r.push(['전압 '+SUBV,fmt(V,'V')],['전류 I',fmt(I,'A')],['소비 전력 P = VI',fmt(V*I,'W')],['밝기 P / P<sub>정격</sub>',(Math.max(0,V*I/e.P)*100).toFixed(0)+' %']);break;
@@ -1190,7 +1232,7 @@ function warnings(){
   if(sim.blown)w.add('⚠ '+sim.blown);
   if(sim.coarse)w.add('⚠ 교류 주파수에 비해 속도 배율이 커서 계산이 부정확할 수 있다. 속도를 낮춰라');
   for(const e of els){
-    if((e.t==='battery'||e.t==='acsource')&&Math.abs(e.I)>5)w.add(`⚠ ${T[e.t].nm}에 ${fmt(Math.abs(e.I),'A')}의 큰 전류: 단락(쇼트)이 의심된다`);
+    if((e.t==='battery'||e.t==='acsource'||e.t==='emcoil')&&Math.abs(e.I)>5)w.add(`⚠ ${T[e.t].nm}에 ${fmt(Math.abs(e.I),'A')}의 큰 전류: 단락(쇼트)이 의심된다`);
     if(e.t==='led'&&e.I>0.03)w.add(`⚠ LED 과전류 ${fmt(e.I,'A')}: 직렬 저항을 넣어라`);
     if(e.t==='led'&&e.V<-5)w.add(`⚠ LED 역방향 전압 ${fmt(e.V,'V')}: 실제 LED는 약 5 V 이상에서 손상될 수 있다`);
     if(e.t==='bulb'&&e.V*e.I>1.5*e.P)w.add('⚠ 전구 과부하: 정격 전력의 1.5배를 넘었다');
@@ -1213,7 +1255,7 @@ function sample(t){
 function frame(now){
   const dtr=Math.min(.05,Math.max(0,(now-last)/1000));last=now;
   sim.hasAC=false;sim.acF=0;
-  for(const e of els)if(e.t==='acsource'){sim.hasAC=true;sim.acF=sim.acF?Math.min(sim.acF,e.f):e.f;}
+  for(const e of els)if(e.t==='acsource'||(e.t==='emcoil'&&e.em==='per')){sim.hasAC=true;sim.acF=sim.acF?Math.min(sim.acF,e.f):e.f;}
   sim.tauR=sim.acF?2/sim.acF:.3;
   const hmax=sim.acF?1/(sim.acF*50):1/240;
   sim.coarse=false;

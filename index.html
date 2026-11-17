@@ -1278,7 +1278,8 @@ resize();
 window.addEventListener('resize',()=>{resize();});
 bindOpt('odots','dots');bindOpt('oelec','elec');bindOpt('ovcol','vcol');bindOpt('olab','lab');bindOpt('oghost','ghost');
 setRun(true);
-if(load()){normalize();fit();}else{els=EX[0].d.map(([t,a,b,p])=>newEl(t,a,b,p));normalize();fixLayers();fit();}
+if(load())normalize();
+fit();
 buildLayers();
 setTool('select');
 initAuth();

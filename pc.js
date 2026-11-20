@@ -6,14 +6,14 @@
 const MATW=800,MATH=1150,CASEW=780,CASEH=870;
 const MB={w:390,h:488};
 const PD={
-  mobo:{w:390,h:488,nm:'메인보드'},
-  cpu:{w:60,h:72,nm:'CPU'},
-  cooler:{w:170,h:160,nm:'CPU 쿨러'},
-  ram1:{w:213,h:44,nm:'램(RAM) 1'},
-  ram2:{w:213,h:44,nm:'램(RAM) 2'},
-  m2:{w:128,h:35,nm:'M.2 SSD'},
-  gpu:{w:480,h:190,nm:'그래픽카드'},
-  psu:{w:240,h:138,nm:'파워서플라이'},
+  mobo:{w:390,h:488,nm:'메인보드 (X870E)'},
+  cpu:{w:60,h:72,nm:'CPU (Ryzen 9 9950X3D2)'},
+  cooler:{w:170,h:160,nm:'CPU 쿨러 (NH-D15 G2)'},
+  ram1:{w:213,h:44,nm:'램 1 (DDR5-6000 32GB)'},
+  ram2:{w:213,h:44,nm:'램 2 (DDR5-6000 32GB)'},
+  m2:{w:128,h:35,nm:'M.2 SSD (SN8100 4TB)'},
+  gpu:{w:480,h:190,nm:'그래픽카드 (RTX 5090)'},
+  psu:{w:240,h:138,nm:'파워서플라이 (1600W)'},
   paste:{w:100,h:26,nm:'써멀 그리스'},
   panel:{w:250,h:320,nm:'측면 패널'}
 };
@@ -28,8 +28,9 @@ const CD={
   c_cpufan:{t:'fan',nm:'쿨러 팬 케이블(4핀)',col:'#d9d9d9',w:18,h:9,an:['part','cooler',160,150],rel:[40,40]},
   c_sysfan:{t:'fan',nm:'후면 팬 케이블(3핀)',col:'#d9d9d9',w:18,h:9,an:['case',78,236],rel:[50,70]},
   c_atx24:{t:'atx24',nm:'메인보드 전원(24핀)',col:'#2b2b2b',w:22,h:58,an:['part','psu',240,35],rel:[70,-110],thick:9},
-  c_eps8:{t:'eps8',nm:'CPU 전원(8핀 EPS)',col:'#2b2b2b',w:22,h:24,an:['part','psu',240,55],rel:[110,-60],thick:6,lab:'CPU'},
-  c_pcie8:{t:'pcie8',nm:'그래픽카드 전원(8핀 PCIe)',col:'#2b2b2b',w:22,h:24,an:['part','psu',240,75],rel:[150,-10],thick:6,lab:'PCIe'},
+  c_eps8:{t:'eps8',nm:'CPU 전원 1(8핀 EPS)',col:'#2b2b2b',w:22,h:24,an:['part','psu',240,55],rel:[110,-60],thick:6,lab:'CPU'},
+  c_eps8b:{t:'eps8',nm:'CPU 전원 2(8핀 EPS)',col:'#2b2b2b',w:22,h:24,an:['part','psu',240,65],rel:[130,-30],thick:6,lab:'CPU'},
+  c_pcie8:{t:'gpu16',nm:'그래픽카드 전원(12V-2x6 16핀)',col:'#2b2b2b',w:28,h:18,an:['part','psu',240,75],rel:[150,20],thick:7,lab:'16핀'},
   c_sata:{t:'sata',nm:'SATA 전원(이번 조립에는 쓰지 않음)',col:'#2b2b2b',w:26,h:10,an:['part','psu',240,95],rel:[90,50],thick:4},
   c_pwrsw:{t:'fp2',nm:'전원 스위치(POWER SW)',col:'#8a8f98',w:28,h:11,sh:'PWR',an:['case',494,560],rel:[110,-130],lab:'POWER SW'},
   c_rstsw:{t:'fp2',nm:'리셋 스위치(RESET SW)',col:'#8a8f98',w:28,h:11,sh:'RST',an:['case',494,560],rel:[110,-90],lab:'RESET SW'},
@@ -97,7 +98,8 @@ function slots(){
 function headers(){
   const m=moboR(),L=[];
   const H=(id,t,x,y,w,h,nm)=>L.push({id,t,x:m.x+x,y:m.y+y,w,h,nm});
-  H('eps','eps8',60,10,46,18,'CPU 8핀(EPS)');
+  H('eps','eps8',60,10,46,18,'CPU 8핀 1');
+  H('eps2','eps8',110,10,46,18,'CPU 8핀 2');
   H('cpufan','fan',215,20,22,10,'CPU_FAN');
   H('sysfan','fan',250,470,22,10,'SYS_FAN1');
   H('atx24','atx24',340,150,22,110,'ATX 24핀');
@@ -107,7 +109,7 @@ function headers(){
   H('fpHDLED','fp2',280,466,30,12,'F_PANEL HDD LED 자리');
   H('fpRST','fp2',310,466,30,12,'F_PANEL 리셋 자리');
   H('audio','audio',20,462,34,16,'HD_AUDIO');
-  if(S.inst.gpu)H('gpupwr','pcie8',326,282,48,14,'그래픽카드 8핀');
+  if(S.inst.gpu)H('gpupwr','gpu16',322,280,56,16,'그래픽카드 12V-2x6');
   if(S.inst.mobo)L.push({id:'hdmiMobo',t:'hdmi',x:CO.x+24,y:CO.y+190,w:32,h:14,nm:'메인보드 HDMI'});
   if(S.inst.gpu)L.push({id:'hdmiGpu',t:'hdmi',x:CO.x+24,y:CO.y+384,w:32,h:14,nm:'그래픽카드 HDMI'});
   if(S.inst.psu)L.push({id:'acin',t:'ac',x:CO.x+24,y:CO.y+645,w:32,h:26,nm:'파워 전원 입력'});
@@ -459,7 +461,7 @@ function dropConn(){
   const hd=hdrAt(p);
   if(hd&&!(panelBlocks(p)&&!['hdmi','ac'].includes(hd.t))){
     if(hd.t!==d.t){
-      if(d.t==='eps8'&&hd.t==='pcie8'||d.t==='pcie8'&&hd.t==='eps8')toast('CPU용 8핀(EPS)과 그래픽카드용 8핀(PCIe)은 모양이 달라서 안 들어가요. 커넥터에 적힌 글자(CPU / PCIe)를 확인해 주세요','bad',5000);
+      if(d.t==='eps8'&&hd.t==='gpu16'||d.t==='gpu16'&&hd.t==='eps8')toast('CPU용 8핀(EPS)과 그래픽카드용 12V-2x6(16핀)은 모양이 완전히 달라서 안 들어가요. 커넥터에 적힌 글자(CPU / 16핀)를 확인해 주세요','bad',5000);
       else if(d.t==='sata')toast('SATA 전원은 SATA 저장장치용이에요. 이번 조립에서는 안 쓰니 그냥 두세요','bad');
       else toast(`${d.nm}는 ${hd.nm}에 안 맞아요`,'bad');
     }else{
@@ -496,18 +498,18 @@ function tapInter(id){
 }
 
 /* ================= 부팅 판정 ================= */
+const epsN=()=>['c_eps8','c_eps8b'].filter(c=>S.conn[c]==='eps'||S.conn[c]==='eps2').length;
 function diagnose(){
   if(S.conn.c_atx24!=='atx24')return{dead:true,msg:'메인보드 24핀 전원이 안 꽂혀 있어서 아무 반응이 없어요.'};
-  const r={};
-  if(S.conn.c_eps8!=='eps')return{led:'CPU',msg:'팬은 도는데 CPU 디버그 LED가 켜진 채 멈췄어요. CPU 보조전원(8핀 EPS)이 빠지면 CPU에 전원이 안 들어가요.'};
+  if(!epsN())return{led:'CPU',msg:'팬은 도는데 CPU 디버그 LED가 켜진 채 멈췄어요. CPU 보조전원(8핀 EPS)이 하나도 안 꽂혀 있으면 CPU에 전원이 안 들어가요.'};
   if(!S.inst.cpu||S.lever!=='closed')return{led:'CPU',msg:'CPU 디버그 LED에서 멈췄어요. CPU가 없거나 소켓 레버가 고정되지 않았어요.'};
   if(!S.inst.ram1&&!S.inst.ram2)return{led:'DRAM',msg:'DRAM 디버그 LED에서 멈췄어요. 램이 없으면 부팅이 안 돼요.'};
-  if(!S.inst.gpu)return{led:'VGA',msg:'VGA 디버그 LED에서 멈췄어요. 이 CPU(Core i5-13400F)는 내장 그래픽이 없어서 그래픽카드가 꼭 있어야 해요.'};
-  if(S.conn.c_pcie8!=='gpupwr')return{led:'VGA',msg:'VGA 디버그 LED에서 멈췄어요. 그래픽카드 보조전원(PCIe 8핀)이 안 꽂혀 있어요.'};
-  if(!S.inst.cooler)return{overheat:3.6,msg:'쿨러가 없어서 CPU 온도가 순식간에 100 °C를 넘었고, CPU가 스스로를 지키려고 전원을 껐어요.'};
+  if(S.inst.gpu&&S.conn.c_pcie8!=='gpupwr')return{led:'VGA',msg:'VGA 디버그 LED에서 멈췄어요. RTX 5090의 12V-2x6(16핀) 전원이 안 꽂혀 있어요. 이 카드는 최대 575 W를 써서 슬롯 전원만으로는 켜지지 않아요.'};
+  if(!S.inst.cooler)return{overheat:3.6,msg:'쿨러가 없어서 CPU 온도가 순식간에 95 °C 한계를 넘었고, CPU가 스스로를 지키려고 전원을 껐어요.'};
   if(S.conn.c_cpufan!=='cpufan')return{fanerr:true,msg:S.conn.c_cpufan?'쿨러 팬이 CPU_FAN이 아닌 다른 팬 단자에 꽂혀 있어서 BIOS가 "CPU Fan Error"를 띄웠어요.':'쿨러 팬 케이블이 안 꽂혀 있어서 BIOS가 "CPU Fan Error"를 띄웠어요.'};
   if(!S.inst.m2)return{led:'BOOT',noboot:true,msg:'BOOT 디버그 LED에서 멈추고 "부팅 장치를 찾을 수 없음" 메시지가 떴어요. 운영체제가 든 SSD가 없어요.'};
   if(!S.paste)return{os:true,overheat:10,msg:'윈도우까지는 켜졌는데, 써멀 그리스가 없어서 열이 쿨러로 잘 안 넘어갔어요. 온도가 계속 올라 과열로 꺼졌어요.'};
+  if(!S.inst.gpu)return{os:true,igpuOnly:true,msg:'그래픽카드 없이 CPU 내장 그래픽으로 켜졌어요. Ryzen 9000은 작은 내장 그래픽이 있어서 메인보드 HDMI로 화면이 나와요. 게임용 성능을 쓰려면 RTX 5090을 달아야 해요.'};
   return{os:true,ok:true,msg:'정상적으로 부팅됐어요.'};
 }
 function pressButton(id){
@@ -548,7 +550,7 @@ function steps(){
   const L=[];
   const st=(id,title,done,text,why,tg)=>L.push({id,title,done,text,why,tg});
   st('lever','CPU 소켓 레버 올리기',!!S.inst.cpu||S.lever==='open','메인보드 CPU 소켓 오른쪽에 있는 쇠 레버를 탭해서 올려 주세요.','레버를 올려야 소켓 덮개(로드 플레이트)가 열려서 CPU를 넣을 수 있어요.',['lever']);
-  st('cpu','CPU 장착',!!S.inst.cpu,'CPU를 끌어서 소켓에 놓아 주세요. CPU 모서리의 금색 삼각형이 소켓 왼쪽 위 삼각형과 같은 쪽에 와야 해요. 방향이 다르면 매트 위 CPU를 탭해서 90°씩 돌려 주세요.','CPU는 한 방향으로만 들어가요. 억지로 누르면 소켓 핀이 휘어서 메인보드가 망가져요.',['cpu','socket']);
+  st('cpu','CPU 장착',!!S.inst.cpu,'CPU를 끌어서 소켓에 놓아 주세요. CPU 모서리의 금색 삼각형이 소켓 왼쪽 위 삼각형과 같은 쪽에 와야 해요. 방향이 다르면 매트 위 CPU를 탭해서 90°씩 돌려 주세요.','AM5 소켓은 핀이 CPU가 아니라 메인보드 쪽에 있어요. CPU는 한 방향으로만 들어가고, 억지로 누르면 소켓 핀이 휘어서 메인보드가 망가져요.',['cpu','socket']);
   st('leverc','소켓 레버 내리기',!!S.inst.cpu&&S.lever==='closed','레버를 다시 탭해서 내려 주세요.','레버가 CPU를 눌러 고정해야 핀이 제대로 닿아요.',['lever']);
   st('paste','써멀 그리스 바르기',S.paste,'써멀 그리스 튜브를 끌어서 소켓의 CPU 위에 놓아 주세요.','CPU와 쿨러 바닥 사이의 미세한 틈을 메워서 열이 잘 전달되게 해 줘요.',['paste','socket']);
   st('cooler','CPU 쿨러 장착',!!S.inst.cooler&&S.paste,S.inst.cooler&&!S.paste?'써멀 그리스 없이 쿨러를 달았어요. 쿨러를 끌어서 뗀 다음, 써멀을 바르고 다시 달아 주세요.':'CPU 쿨러를 끌어서 CPU 위에 놓아 주세요.','쿨러가 없으면 CPU는 몇 초 만에 100 °C를 넘어요.',['cooler','coolerSlot']);
@@ -556,15 +558,15 @@ function steps(){
   const badRam=ram2.some(s=>s==='A1'||s==='B1');
   const ramTxt=ram2.length===2&&badRam?'램이 A1/B1에 꽂혀 있어요. 2개를 쓸 때는 설명서 권장 슬롯인 A2·B2(CPU에서 2번째·4번째)에 꽂아야 듀얼 채널이 제대로 동작해요. 래치를 열고 옮겨 주세요.':
     '램 슬롯 A2·B2(CPU 쪽에서 2번째·4번째) 아래쪽 래치를 탭해서 연 다음, 램을 끌어 슬롯에 놓아 주세요. 램의 홈(노치)이 안 맞으면 매트 위에서 탭해 180° 돌리면 돼요.';
-  st('ram','램 2개 장착 (A2·B2)',ram2.length===2&&!badRam,ramTxt,'램 2개를 서로 다른 채널(A·B)에 나눠 꽂아야 듀얼 채널로 속도(대역폭)가 두 배가 돼요.',['ram1','ram2','A2','B2','latchA2','latchB2']);
-  st('m2','M.2 SSD 장착',!!S.inst.m2,'M.2 SSD를 끌어서 메인보드 가운데 M.2 슬롯에 놓아 주세요.','운영체제(윈도우)가 들어 있는 저장장치예요. 없으면 부팅할 곳이 없어요.',['m2','m2slot']);
+  st('ram','램 32GB 2개 장착 (A2·B2)',ram2.length===2&&!badRam,ramTxt,'램 2개를 서로 다른 채널(A·B)에 나눠 꽂아야 듀얼 채널로 속도(대역폭)가 두 배가 돼요.',['ram1','ram2','A2','B2','latchA2','latchB2']);
+  st('m2','M.2 SSD 장착',!!S.inst.m2,'M.2 SSD를 끌어서 메인보드 가운데 M.2 슬롯에 놓아 주세요.','운영체제(윈도우)가 들어 있는 저장장치예요. PCIe 5.0 SSD는 CPU에 직접 연결된 이 슬롯에 꽂아야 최고 속도(약 14.9 GB/s)가 나와요.',['m2','m2slot']);
   st('psu','파워 장착',!!S.inst.psu,'파워서플라이를 끌어서 케이스 아래쪽 칸(파워 덮개 안)에 넣어 주세요.','파워는 콘센트의 교류 220 V를 컴퓨터가 쓰는 직류 12 V·5 V·3.3 V로 바꿔 줘요.',['psu','psubay']);
   st('mobo','메인보드를 케이스에 장착',!!S.inst.mobo,'메인보드를 통째로 끌어서 케이스 안 스탠드오프(나사 기둥) 위에 놓아 주세요. 후면 단자가 케이스 뒤쪽(왼쪽)을 향해야 해요.','스탠드오프가 메인보드를 케이스 철판에서 띄워 줘서 합선을 막아요.',['mobo','tray']);
   st('covers','확장 슬롯 덮개 떼기',!S.covers[0]&&!S.covers[1]||!!S.inst.gpu,'케이스 뒤판에서 그래픽카드 높이에 있는 확장 슬롯 덮개 1·2번을 탭해서 떼어 주세요.','그래픽카드는 2칸 두께라서 덮개 2개를 떼야 출력 단자가 밖으로 나와요.',['cover0','cover1']);
   st('gpu','그래픽카드 장착',!!S.inst.gpu,'그래픽카드를 끌어서 메인보드 맨 위 PCIe x16 슬롯에 놓아 주세요.','CPU와 가장 가까운 x16 슬롯이 CPU에 직접 연결된 16배속 슬롯이에요.',['gpu','pcie']);
   st('atx24','메인보드 24핀 전원',S.conn.c_atx24==='atx24','파워에서 나온 가장 두꺼운 24핀 커넥터를 메인보드 오른쪽 가장자리 24핀 단자에 꽂아 주세요.','메인보드 전체에 전기를 공급하는 주 전원이에요.',['c_atx24','atx24']);
-  st('eps','CPU 8핀 전원(EPS)',S.conn.c_eps8==='eps','"CPU"라고 적힌 8핀 커넥터를 메인보드 왼쪽 위 CPU 8핀 단자에 꽂아 주세요.','CPU는 전기를 많이 써서 12 V 전원을 따로 받아요.',['c_eps8','eps']);
-  st('pcie','그래픽카드 8핀 전원',S.conn.c_pcie8==='gpupwr','"PCIe"라고 적힌 8핀 커넥터를 그래픽카드 위쪽 전원 단자에 꽂아 주세요.','그래픽카드는 슬롯으로는 75 W까지만 받을 수 있어서 보조전원이 필요해요.',['c_pcie8','gpupwr']);
+  st('eps','CPU 8핀 전원 2개 (EPS)',epsN()===2,epsN()===1?'CPU 8핀이 하나만 꽂혀 있어요. 나머지 "CPU" 8핀 커넥터도 메인보드 왼쪽 위 남은 CPU 8핀 단자에 꽂아 주세요.':'"CPU"라고 적힌 8핀 커넥터 2개를 메인보드 왼쪽 위 CPU 8핀 단자 두 곳에 꽂아 주세요.','Ryzen 9 9950X3D2는 200 W급 CPU라서 8핀 두 개로 전기를 나눠 받아야 무거운 작업에서도 안정적이에요. 하나만 꽂아도 켜지긴 해요.',['c_eps8','c_eps8b','eps','eps2']);
+  st('pcie','그래픽카드 12V-2x6 전원',S.conn.c_pcie8==='gpupwr','"16핀"이라고 적힌 12V-2x6 커넥터를 그래픽카드 위쪽 전원 단자에 딸깍 소리가 날 때까지 끝까지 꽂아 주세요.','RTX 5090은 최대 575 W를 써요. 커넥터가 덜 꽂히면 접촉 부분이 뜨거워져 녹을 수 있어서 끝까지 밀어 넣는 게 중요해요.',['c_pcie8','gpupwr']);
   st('sysfan','후면 팬 → SYS_FAN1',S.conn.c_sysfan==='sysfan',S.conn.c_sysfan==='cpufan'?'후면 팬이 CPU_FAN에 꽂혀 있어요. 메인보드 아래쪽 SYS_FAN1로 옮겨 주세요.':'케이스 뒤쪽 팬 케이블을 메인보드 아래쪽 SYS_FAN1 단자에 꽂아 주세요.','케이스 안의 뜨거운 공기를 밖으로 빼 줘요.',['c_sysfan','sysfan']);
   const FPW={c_pwrsw:['fpPWR','POWER SW','위 줄 오른쪽 (PWR PWR)'],c_rstsw:['fpRST','RESET SW','아래 줄 오른쪽 (RST RST)'],c_pled:['fpPLED','POWER LED','위 줄 왼쪽 (PLED+ PLED−)'],c_hdled:['fpHDLED','HDD LED','아래 줄 왼쪽 (HDD+ HDD−)']};
   const PNM={fpPWR:'위 줄 오른쪽',fpRST:'아래 줄 오른쪽',fpPLED:'위 줄 왼쪽',fpHDLED:'아래 줄 왼쪽'};
@@ -581,7 +583,7 @@ function steps(){
   st('fp','전면 패널 커넥터 (F_PANEL)',fpOk,'케이스 앞쪽에서 나온 작은 커넥터 4개를 메인보드 오른쪽 아래 F_PANEL 핀에 꽂아 주세요. 커넥터 안에 이름(PWR, RST, PLED, HDD)이 적혀 있어요.<ol style="list-style:none;padding-left:0;font-size:13px;color:#d5dde6">'+fpRows.join('')+'</ol>LED 커넥터는 + 표시가 핀의 +쪽(왼쪽)에 와야 해요.<div class="pins">'+fpTxt+'</div>','스위치는 방향이 상관없지만, LED는 다이오드라서 한쪽으로만 전류가 흘러요. 화면을 크게 확대하면 핀 이름이 보여요.',fpTg.length?fpTg:['fpPWR']);
   st('usbaud','전면 USB 3.0·오디오',S.conn.c_usb3==='usb3'&&S.conn.c_audio==='audio','파란 USB 3.0 커넥터는 메인보드 오른쪽 USB3 헤더에, 오디오 커넥터는 메인보드 왼쪽 아래 HD_AUDIO에 꽂아 주세요.','안 꽂아도 부팅은 되지만, 케이스 앞쪽 USB 단자와 이어폰 단자가 동작하지 않아요.',['c_usb3','c_audio','usb3','audio']);
   st('panel','측면 패널 닫기',!!S.inst.panel,'매트 위 측면 패널(강화유리)을 끌어서 케이스 위에 놓아 주세요.','먼지를 막고, 케이스 팬이 만드는 공기 흐름이 제대로 생기게 해 줘요.',['panel']);
-  st('hdmi','모니터 케이블 → 그래픽카드',S.conn.c_hdmi==='hdmiGpu',S.conn.c_hdmi==='hdmiMobo'?'모니터 케이블이 메인보드 HDMI에 꽂혀 있어요. 그래픽카드를 쓰면(특히 내장 그래픽이 없는 F 모델이면) 그래픽카드 쪽 단자에 꽂아야 화면이 나와요.':'모니터에서 나온 HDMI 케이블 끝을 케이스 뒤쪽 그래픽카드 HDMI 단자에 꽂아 주세요.','화면 신호는 그래픽카드가 만들어요.',['c_hdmi','hdmiGpu']);
+  st('hdmi','모니터 케이블 → 그래픽카드',S.conn.c_hdmi==='hdmiGpu',S.conn.c_hdmi==='hdmiMobo'?'모니터 케이블이 메인보드 HDMI에 꽂혀 있어요. Ryzen 9000은 내장 그래픽이 있어서 화면은 나오지만, RTX 5090 성능을 쓰려면 그래픽카드 쪽 단자에 꽂아야 해요.':'모니터에서 나온 HDMI 케이블 끝을 케이스 뒤쪽 그래픽카드 HDMI 단자에 꽂아 주세요.','화면 신호는 그래픽카드가 만들어요.',['c_hdmi','hdmiGpu']);
   st('ac','전원 케이블 꽂기',S.conn.c_ac==='acin','콘센트에서 나온 전원 케이블 끝을 케이스 뒤쪽 아래 파워 전원 단자에 꽂아 주세요.','작업을 다 끝낸 뒤 마지막에 꽂는 게 안전해요.',['c_ac','acin']);
   st('psusw','파워 스위치 켜기',!!S.psuSw,'파워 뒤쪽 스위치를 탭해서 I(켜짐)로 바꿔 주세요.','이 스위치가 O면 전원 버튼을 눌러도 안 켜져요.',['psusw']);
   st('power','전원 버튼 누르기',!!(run&&run.d.ok),'케이스 앞쪽 위 둥근 전원 버튼을 눌러 보세요. 디버그 LED와 모니터 화면을 확인해 보세요.','',['pwrbtn']);
@@ -743,8 +745,8 @@ function drawMobo(r){
   ctx.fillStyle='#b9a36a';for(const[a,b]of[[12,12],[195,12],[378,12],[12,250],[195,250],[378,250],[12,476],[195,476],[378,476]]){ctx.beginPath();ctx.arc(x+a,y+b,4,0,7);ctx.fill();ctx.fillStyle='#1c2a22';ctx.beginPath();ctx.arc(x+a,y+b,2,0,7);ctx.fill();ctx.fillStyle='#b9a36a';}
   // I/O 덮개·VRM
   ctx.fillStyle='#3a3f47';rr(x+2,y+20,52,200,5);ctx.fill();txt('I/O',x+28,y+120,11,'#8b9bb0','center',800);
-  ctx.fillStyle='#454b55';rr(x+112,y+12,96,40,4);ctx.fill();rr(x+62,y+60,40,140,4);ctx.fill();
-  ctx.strokeStyle='#2f343b';for(let k=0;k<8;k++){ctx.beginPath();ctx.moveTo(x+118+k*11,y+16);ctx.lineTo(x+118+k*11,y+48);ctx.stroke();}
+  ctx.fillStyle='#454b55';rr(x+160,y+14,50,40,4);ctx.fill();rr(x+62,y+60,40,140,4);ctx.fill();
+  ctx.strokeStyle='#2f343b';for(let k=0;k<4;k++){ctx.beginPath();ctx.moveTo(x+166+k*11,y+18);ctx.lineTo(x+166+k*11,y+50);ctx.stroke();}
   // CPU 소켓
   ctx.fillStyle='#2b2f35';rr(x+110,y+70,80,92,4);ctx.fill();
   ctx.fillStyle='#4b4f55';ctx.fillRect(x+118,y+78,64,76);
@@ -764,8 +766,8 @@ function drawMobo(r){
   // ATX24, EPS, 팬 헤더
   ctx.fillStyle='#e8e8e8';ctx.fillRect(x+340,y+150,22,110);ctx.fillStyle='#bbb';for(let k=0;k<12;k++){ctx.fillRect(x+343,y+154+k*9,6,6);ctx.fillRect(x+353,y+154+k*9,6,6);}
   txt('ATX 24핀',x+351,y+142,9,'#cfd6dd','center',700);
-  ctx.fillStyle='#e8e8e8';ctx.fillRect(x+60,y+10,46,18);ctx.fillStyle='#bbb';for(let k=0;k<4;k++){ctx.fillRect(x+63+k*11,y+12,7,6);ctx.fillRect(x+63+k*11,y+20,7,6);}
-  txt('CPU 8핀',x+83,y+4,8,'#cfd6dd','center',700);
+  for(const ex of[60,110]){ctx.fillStyle='#e8e8e8';ctx.fillRect(x+ex,y+10,46,18);ctx.fillStyle='#bbb';for(let k=0;k<4;k++){ctx.fillRect(x+ex+3+k*11,y+12,7,6);ctx.fillRect(x+ex+3+k*11,y+20,7,6);}}
+  txt('CPU 8핀 ×2',x+108,y+4,8,'#cfd6dd','center',700);
   const hdr=(hx,hy,w,h,lab,col)=>{ctx.fillStyle=col||'#d9d9d9';ctx.fillRect(x+hx,y+hy,w,h);ctx.fillStyle='#d4a63a';const n=Math.max(2,Math.round(w/6));for(let k=0;k<n;k++)ctx.fillRect(x+hx+2+k*(w-4)/n,y+hy+h/2-1,2,2);if(lab)txt(lab,x+hx+w/2,y+hy-6,7.5,'#cfd6dd','center',700);};
   hdr(215,20,22,10,'CPU_FAN');hdr(250,470,22,10,'SYS_FAN1');
   ctx.fillStyle='#2f6fd6';ctx.fillRect(x+355,y+380,18,50);txt('USB3',x+364,y+372,8,'#cfd6dd','center',700);
@@ -787,13 +789,13 @@ function drawMobo(r){
   // 디버그 LED
   const ls=ledState();
   ['CPU','DRAM','VGA','BOOT'].forEach((n,k)=>{ctx.fillStyle=ls===n?'#ff3b30':'#3a1d1d';ctx.beginPath();ctx.arc(x+350,y+284+k*14,4,0,7);ctx.fill();txt(n,x+358,y+284+k*14,7,ls===n?'#ffb3ad':'#6e7d91','left',700);});
-  txt('Z790 메인보드',x+190,y+468,10,'rgba(255,255,255,.25)','center',800);
+  txt('CROSSHAIR X870E HERO',x+180,y+468,9,'rgba(255,255,255,.28)','center',800);
 }
 function drawCPU(r,rot){
   ctx.save();ctx.translate(r.x+r.w/2,r.y+r.h/2);ctx.rotate(rot*Math.PI/2);
   const w=60,h=72;ctx.fillStyle='#1d5c35';ctx.fillRect(-w/2,-h/2,w,h);
   ctx.fillStyle='#c8ccd2';rr(-w/2+7,-h/2+8,w-14,h-16,4);ctx.fill();
-  txt('intel',0,-12,8,'#555','center',800);txt('Core i5',0,0,7,'#444','center',700);txt('13400F',0,10,7,'#444','center',700);
+  txt('AMD',0,-14,8,'#555','center',900);txt('RYZEN 9',0,-2,7,'#444','center',800);txt('9950X3D2',0,9,6.4,'#444','center',800);
   ctx.fillStyle='#d4a63a';ctx.beginPath();ctx.moveTo(-w/2+1,-h/2+1);ctx.lineTo(-w/2+11,-h/2+1);ctx.lineTo(-w/2+1,-h/2+11);ctx.fill();
   ctx.restore();
   if(S.paste&&partRect('cpu').inst&&!S.inst.cooler){ctx.fillStyle='#c9ccd1';ctx.beginPath();ctx.ellipse(r.x+30,r.y+36,8,7,0,0,7);ctx.fill();}
@@ -806,42 +808,42 @@ function drawCooler(r){
   ctx.fillStyle='#c4762f';for(let k=0;k<4;k++)ctx.fillRect(x+20+k*26,y-4,8,12);
   ctx.fillStyle='#202429';rr(x+128,y+4,40,152,6);ctx.fill();
   ctx.fillStyle='#3a414c';for(let k=0;k<9;k++)ctx.fillRect(x+132,y+12+((k*17+sp*20)%140),32,6);
-  txt('CPU 쿨러',x+65,y+80,13,'#2b2f35','center',800);
+  txt('CPU 쿨러',x+65,y+72,13,'#2b2f35','center',800);txt('NH-D15 G2',x+65,y+90,9,'#3a3f47','center',800);
 }
 function drawRAM(r,id,inst){
   if(inst){ctx.fillStyle='#22262d';ctx.fillRect(r.x-2,r.y-4,16,232);ctx.fillStyle='#c33b3b';ctx.fillRect(r.x,r.y-2,12,228);ctx.fillStyle='#e35d5d';ctx.fillRect(r.x+3,r.y,3,224);return;}
   const rot=S.rot[id];
   ctx.save();ctx.translate(r.x+r.w/2,r.y+r.h/2);if(rot)ctx.rotate(Math.PI);
   const w=213,h=44;ctx.fillStyle='#1d4d2c';ctx.fillRect(-w/2,-h/2,w,h);
-  ctx.fillStyle='#c33b3b';rr(-w/2+4,-h/2+2,w-8,h-14,3);ctx.fill();txt('DDR5 16GB',0,-h/2+16,11,'#fff','center',800);
+  ctx.fillStyle='#c33b3b';rr(-w/2+4,-h/2+2,w-8,h-14,3);ctx.fill();txt('DDR5-6000 32GB',0,-h/2+16,11,'#fff','center',800);
   ctx.fillStyle='#d4a63a';for(let k=0;k<44;k++)ctx.fillRect(-w/2+6+k*4.6,h/2-9,3,8);
   ctx.fillStyle='#173a4a';ctx.fillRect(-w/2+w*.42-3,h/2-10,6,10);
   ctx.restore();
 }
-function drawM2(r){ctx.fillStyle='#1d4d2c';ctx.fillRect(r.x,r.y,128,35);ctx.fillStyle='#d4a63a';ctx.fillRect(r.x,r.y+4,6,27);ctx.fillStyle='#22262d';ctx.fillRect(r.x+14,r.y+5,46,25);ctx.fillRect(r.x+66,r.y+5,46,25);txt('NVMe 1TB',r.x+64,r.y+17,9,'#cfd6dd','center',800);}
+function drawM2(r){ctx.fillStyle='#1d4d2c';ctx.fillRect(r.x,r.y,128,35);ctx.fillStyle='#d4a63a';ctx.fillRect(r.x,r.y+4,6,27);ctx.fillStyle='#22262d';ctx.fillRect(r.x+14,r.y+5,46,25);ctx.fillRect(r.x+66,r.y+5,46,25);txt('SN8100 4TB',r.x+64,r.y+17,9,'#cfd6dd','center',800);}
 function drawGPU(r,inst){
-  const pw=run&&S.conn.c_pcie8==='gpupwr',sp=pw?runPhase()*18:0;
+  const pw=run&&S.conn.c_pcie8==='gpupwr'&&!(run.d&&run.d.led),sp=pw?runPhase()*18:0;
   if(inst){
     ctx.fillStyle='#a9b0b9';ctx.fillRect(r.x,r.y-10,10,80);
     ctx.fillStyle='#22262d';rr(r.x+10,r.y,520,64,6);ctx.fill();
     ctx.fillStyle='#14171b';ctx.fillRect(r.x+10,r.y+56,520,8);
     ctx.fillStyle=pw?'#76b900':'#3c5a12';ctx.fillRect(r.x+60,r.y+28,380,4);
-    txt('GEFORCE RTX 4060',r.x+250,r.y+16,12,'#cfd6dd','center',800);
+    txt('GEFORCE RTX 5090',r.x+250,r.y+16,12,'#cfd6dd','center',800);
     ctx.fillStyle='#d4a63a';ctx.fillRect(r.x+92,r.y-4,180,6);
-    ctx.fillStyle='#e8e8e8';ctx.fillRect(r.x+376,r.y-14,48,14);ctx.fillStyle='#bbb';for(let k=0;k<4;k++)ctx.fillRect(r.x+379+k*11,r.y-11,7,8);
-    txt('8핀',r.x+400,r.y-22,8,'#cfd6dd','center',700);
+    ctx.fillStyle='#e8e8e8';ctx.fillRect(r.x+372,r.y-16,56,16);ctx.fillStyle='#bbb';for(let k=0;k<6;k++){ctx.fillRect(r.x+376+k*8.6,r.y-14,5,5);ctx.fillRect(r.x+376+k*8.6,r.y-8,5,5);}
+    txt('12V-2x6',r.x+400,r.y-24,8,'#cfd6dd','center',700);
     return;
   }
   ctx.fillStyle='#a9b0b9';ctx.fillRect(r.x,r.y,12,r.h);
   ctx.fillStyle='#22262d';rr(r.x+12,r.y,468,r.h-14,10);ctx.fill();
   ctx.fillStyle='#d4a63a';ctx.fillRect(r.x+70,r.y+r.h-14,180,10);
   fanDraw(r.x+140,r.y+88,62,sp);fanDraw(r.x+340,r.y+88,62,sp);
-  txt('RTX 4060',r.x+240,r.y+18,12,'#cfd6dd','center',800);
+  txt('GEFORCE RTX 5090',r.x+240,r.y+18,12,'#cfd6dd','center',800);
 }
 function drawPSU(r){
   ctx.fillStyle='#1a1c20';rr(r.x,r.y,240,138,6);ctx.fill();
   ctx.strokeStyle='#33373e';ctx.lineWidth=1;for(let k=0;k<6;k++){ctx.beginPath();ctx.arc(r.x+90,r.y+69,12+k*9,0,7);ctx.stroke();}
-  txt('650W',r.x+190,r.y+52,16,'#e6edf3','center',900);txt('80+ GOLD',r.x+190,r.y+74,10,'#d4a63a','center',800);
+  txt('1600W',r.x+190,r.y+50,17,'#e6edf3','center',900);txt('80+ TITANIUM',r.x+190,r.y+72,9,'#cfd6dd','center',800);txt('ATX 3.1',r.x+190,r.y+88,8,'#8b9bb0','center',700);
   ctx.fillStyle='#000';ctx.fillRect(r.x+234,r.y+28,10,80);
 }
 function drawPaste(r){ctx.fillStyle='#c9ccd1';rr(r.x,r.y,80,26,6);ctx.fill();ctx.fillStyle='#8d949e';ctx.fillRect(r.x+80,r.y+8,20,10);txt('써멀 그리스',r.x+40,r.y+13,10,'#333','center',800);}
@@ -875,7 +877,8 @@ function drawFixed(){
   txt('콘센트',ox+25,oy-8,9,'#8b9bb0','center');
 }
 function drawScreen(x,y,w,h){
-  const on=run&&S.conn.c_hdmi==='hdmiGpu'&&S.inst.gpu,t=runPhase();
+  const viaGpu=S.conn.c_hdmi==='hdmiGpu'&&S.inst.gpu,viaIgpu=S.conn.c_hdmi==='hdmiMobo';
+  const on=run&&(viaGpu||viaIgpu),t=runPhase();
   if(!run){return;}
   if(!on){if(t>1.2){txt(S.conn.c_hdmi?'신호 없음':'케이블 연결 안 됨',x+w/2,y+h/2,14,'#6b7280','center',700);}return;}
   const d=run.d;
@@ -884,11 +887,12 @@ function drawScreen(x,y,w,h){
   if(d.fanerr){ctx.fillStyle='#000';ctx.fillRect(x,y,w,h);txt('CPU Fan Error!',x+14,y+30,13,'#ddd','left',700);txt('Press F1 to Run SETUP',x+14,y+52,12,'#bbb','left',600);return;}
   if(d.noboot){txt('Reboot and Select proper Boot device',x+12,y+30,11,'#ddd','left',600);txt('or Insert Boot Media in selected Boot device',x+12,y+48,11,'#ddd','left',600);return;}
   if(d.overheat&&!d.os){txt('POST…',x+w/2,y+h/2,14,'#ccc','center',700);txt(`CPU ${Math.min(105,40+(t-2.4)*55).toFixed(0)}°C`,x+w-12,y+16,11,'#ff6b6b','right',800);return;}
-  if(t<4.2){txt('Z790 BIOS',x+w/2,y+h/2-8,18,'#fff','center',900);txt('Press DEL to enter SETUP',x+w/2,y+h/2+16,10,'#aaa','center',600);return;}
+  if(t<4.2){txt('X870E BIOS',x+w/2,y+h/2-8,18,'#fff','center',900);txt('Press DEL to enter SETUP',x+w/2,y+h/2+16,10,'#aaa','center',600);return;}
   if(t<6){const a=(t*6)%(Math.PI*2);ctx.strokeStyle='#4ea8ff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+w/2,y+h/2+20,12,a,a+4);ctx.stroke();txt('Windows 시작 중',x+w/2,y+h/2-14,13,'#fff','center',700);return;}
   const g=ctx.createLinearGradient(x,y,x+w,y+h);g.addColorStop(0,'#0f4c81');g.addColorStop(1,'#3a7bd5');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);
   ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(x,y+h-18,w,18);
-  if(d.ok){txt('조립 완료!',x+w/2,y+h/2-14,22,'#fff','center',900);txt('정상적으로 부팅됐어요',x+w/2,y+h/2+14,12,'#e6f0ff','center',600);}
+  if(d.ok&&viaGpu){txt('조립 완료!',x+w/2,y+h/2-22,22,'#fff','center',900);txt('Ryzen 9 9950X3D2 · RTX 5090 · 64GB',x+w/2,y+h/2+6,11,'#e6f0ff','center',700);txt('정상적으로 부팅됐어요',x+w/2,y+h/2+24,11,'#e6f0ff','center',600);}
+  else if(d.ok||d.igpuOnly){txt('내장 그래픽으로 출력 중',x+w/2,y+h/2-14,16,'#fff','center',900);txt(d.igpuOnly?'그래픽카드가 없어요':'RTX 5090을 쓰려면 그래픽카드 단자에 꽂으세요',x+w/2,y+h/2+12,11,'#ffe28a','center',700);}
   else txt(`CPU 온도 ${Math.min(100,55+(t-6)*12).toFixed(0)} °C`,x+w/2,y+h/2,16,t>8?'#ff6b6b':'#fff','center',800);
 }
 function cableOf(c){

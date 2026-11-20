@@ -31,10 +31,10 @@ const CD={
   c_eps8:{t:'eps8',nm:'CPU 전원(8핀 EPS)',col:'#2b2b2b',w:22,h:24,an:['part','psu',240,55],rel:[110,-60],thick:6,lab:'CPU'},
   c_pcie8:{t:'pcie8',nm:'그래픽카드 전원(8핀 PCIe)',col:'#2b2b2b',w:22,h:24,an:['part','psu',240,75],rel:[150,-10],thick:6,lab:'PCIe'},
   c_sata:{t:'sata',nm:'SATA 전원(이번 조립에는 쓰지 않음)',col:'#2b2b2b',w:26,h:10,an:['part','psu',240,95],rel:[90,50],thick:4},
-  c_pwrsw:{t:'fp2',nm:'전원 스위치(POWER SW)',col:'#8a8f98',w:24,h:11,an:['case',815,560],rel:[-110,-150],lab:'POWER SW'},
-  c_rstsw:{t:'fp2',nm:'리셋 스위치(RESET SW)',col:'#8a8f98',w:24,h:11,an:['case',815,560],rel:[-110,-110],lab:'RESET SW'},
-  c_pled:{t:'fp2',nm:'전원 LED(POWER LED +/−)',col:'#8a8f98',w:24,h:11,an:['case',815,560],rel:[-110,-70],lab:'POWER LED',pol:true},
-  c_hdled:{t:'fp2',nm:'HDD LED(+/−)',col:'#8a8f98',w:24,h:11,an:['case',815,560],rel:[-110,-30],lab:'HDD LED',pol:true},
+  c_pwrsw:{t:'fp2',nm:'전원 스위치(POWER SW)',col:'#8a8f98',w:28,h:11,sh:'PWR',an:['case',815,560],rel:[-110,-150],lab:'POWER SW'},
+  c_rstsw:{t:'fp2',nm:'리셋 스위치(RESET SW)',col:'#8a8f98',w:28,h:11,sh:'RST',an:['case',815,560],rel:[-110,-110],lab:'RESET SW'},
+  c_pled:{t:'fp2',nm:'전원 LED(POWER LED +/−)',col:'#8a8f98',w:28,h:11,sh:'PLED',an:['case',815,560],rel:[-110,-70],lab:'POWER LED',pol:true},
+  c_hdled:{t:'fp2',nm:'HDD LED(+/−)',col:'#8a8f98',w:28,h:11,sh:'HDD',an:['case',815,560],rel:[-110,-30],lab:'HDD LED',pol:true},
   c_usb3:{t:'usb3',nm:'전면 USB 3.0(19핀)',col:'#2f6fd6',w:20,h:44,an:['case',815,560],rel:[-110,20],thick:6},
   c_audio:{t:'audio',nm:'전면 오디오(HD AUDIO)',col:'#2b2b2b',w:30,h:12,an:['case',815,560],rel:[-110,80],thick:3},
   c_hdmi:{t:'hdmi',nm:'모니터 케이블(HDMI)',col:'#1d1d1d',w:26,h:14,an:['mat',200,1040],rel:[200,40],thick:6},
@@ -565,13 +565,19 @@ function steps(){
   st('eps','CPU 8핀 전원(EPS)',S.conn.c_eps8==='eps','"CPU"라고 적힌 8핀 커넥터를 메인보드 왼쪽 위 CPU 8핀 단자에 꽂아 주세요.','CPU는 전기를 많이 써서 12 V 전원을 따로 받아요.',['c_eps8','eps']);
   st('pcie','그래픽카드 8핀 전원',S.conn.c_pcie8==='gpupwr','"PCIe"라고 적힌 8핀 커넥터를 그래픽카드 위쪽 전원 단자에 꽂아 주세요.','그래픽카드는 슬롯으로는 75 W까지만 받을 수 있어서 보조전원이 필요해요.',['c_pcie8','gpupwr']);
   st('sysfan','후면 팬 → SYS_FAN1',S.conn.c_sysfan==='sysfan',S.conn.c_sysfan==='cpufan'?'후면 팬이 CPU_FAN에 꽂혀 있어요. 메인보드 아래쪽 SYS_FAN1로 옮겨 주세요.':'케이스 뒤쪽 팬 케이블을 메인보드 아래쪽 SYS_FAN1 단자에 꽂아 주세요.','케이스 안의 뜨거운 공기를 밖으로 빼 줘요.',['c_sysfan','sysfan']);
-  const fpOk=S.conn.c_pwrsw==='fpPWR'&&S.conn.c_rstsw==='fpRST'&&S.conn.c_pled==='fpPLED'&&S.rot.c_pled===0&&S.conn.c_hdled==='fpHDLED'&&S.rot.c_hdled===0;
-  const fpIssue=[];
-  if(S.conn.c_pwrsw&&S.conn.c_pwrsw!=='fpPWR')fpIssue.push('POWER SW가 엉뚱한 자리에 꽂혀 있어요');
-  if(S.conn.c_rstsw&&S.conn.c_rstsw!=='fpRST')fpIssue.push('RESET SW가 엉뚱한 자리에 꽂혀 있어요');
-  if(S.conn.c_pled&&(S.conn.c_pled!=='fpPLED'||S.rot.c_pled))fpIssue.push(S.conn.c_pled!=='fpPLED'?'POWER LED가 엉뚱한 자리에 꽂혀 있어요':'POWER LED의 +/− 방향이 반대예요(커넥터를 탭하면 뒤집혀요)');
-  if(S.conn.c_hdled&&(S.conn.c_hdled!=='fpHDLED'||S.rot.c_hdled))fpIssue.push(S.conn.c_hdled!=='fpHDLED'?'HDD LED가 엉뚱한 자리에 꽂혀 있어요':'HDD LED의 +/− 방향이 반대예요(커넥터를 탭하면 뒤집혀요)');
-  st('fp','전면 패널 커넥터 (F_PANEL)',fpOk,(fpIssue.length?'⚠ '+fpIssue.join(', ')+'.<br>':'')+'케이스 앞쪽에서 나온 작은 커넥터 4개(POWER SW, RESET SW, POWER LED, HDD LED)를 메인보드 오른쪽 아래 F_PANEL 핀에 꽂아 주세요. LED는 +/− 방향이 있어요. 커넥터의 + 표시가 핀의 +쪽에 오게 하고, 반대면 커넥터를 탭해서 뒤집으면 돼요.<div class="pins">'+fpTxt+'</div>','스위치는 방향이 상관없지만, LED는 다이오드라서 한쪽으로만 전류가 흘러요.',['c_pwrsw','c_rstsw','c_pled','c_hdled','fpPWR','fpRST','fpPLED','fpHDLED']);
+  const FPW={c_pwrsw:['fpPWR','POWER SW','위 줄 오른쪽 (PWR PWR)'],c_rstsw:['fpRST','RESET SW','아래 줄 오른쪽 (RST RST)'],c_pled:['fpPLED','POWER LED','위 줄 왼쪽 (PLED+ PLED−)'],c_hdled:['fpHDLED','HDD LED','아래 줄 왼쪽 (HDD+ HDD−)']};
+  const PNM={fpPWR:'위 줄 오른쪽',fpRST:'아래 줄 오른쪽',fpPLED:'위 줄 왼쪽',fpHDLED:'아래 줄 왼쪽'};
+  let fpOk=true;const fpRows=[],fpTg=[];
+  for(const c in FPW){
+    const[want,nm,where]=FPW[c],at=S.conn[c];let st2,ok=false;
+    if(!at)st2='아직 안 꽂았어요. 케이스 앞쪽에 늘어진 커넥터를 끌어 꽂아 주세요';
+    else if(at!==want)st2=`자리가 틀렸어요 (지금 ${PNM[at]||at}). 끌어서 옮겨 주세요`;
+    else if(CD[c].pol&&S.rot[c])st2='자리는 맞는데 +/− 방향이 반대예요. 커넥터를 한 번 탭하면 뒤집혀요';
+    else{st2='완료';ok=true;}
+    if(!ok){fpOk=false;fpTg.push(c);if(at!==want)fpTg.push(want);}
+    fpRows.push(`<li class="${ok?'done':''}">${ok?'✓':'✗'} <b>${nm}</b> → ${where}<br><span style="font-weight:400">${st2}</span></li>`);
+  }
+  st('fp','전면 패널 커넥터 (F_PANEL)',fpOk,'케이스 앞쪽에서 나온 작은 커넥터 4개를 메인보드 오른쪽 아래 F_PANEL 핀에 꽂아 주세요. 커넥터 안에 이름(PWR, RST, PLED, HDD)이 적혀 있어요.<ol style="list-style:none;padding-left:0;font-size:13px;color:#d5dde6">'+fpRows.join('')+'</ol>LED 커넥터는 + 표시가 핀의 +쪽(왼쪽)에 와야 해요.<div class="pins">'+fpTxt+'</div>','스위치는 방향이 상관없지만, LED는 다이오드라서 한쪽으로만 전류가 흘러요. 화면을 크게 확대하면 핀 이름이 보여요.',fpTg.length?fpTg:['fpPWR']);
   st('usbaud','전면 USB 3.0·오디오',S.conn.c_usb3==='usb3'&&S.conn.c_audio==='audio','파란 USB 3.0 커넥터는 메인보드 오른쪽 USB3 헤더에, 오디오 커넥터는 메인보드 왼쪽 아래 HD_AUDIO에 꽂아 주세요.','안 꽂아도 부팅은 되지만, 케이스 앞쪽 USB 단자와 이어폰 단자가 동작하지 않아요.',['c_usb3','c_audio','usb3','audio']);
   st('panel','측면 패널 닫기',!!S.inst.panel,'매트 위 측면 패널(강화유리)을 끌어서 케이스 위에 놓아 주세요.','먼지를 막고, 케이스 팬이 만드는 공기 흐름이 제대로 생기게 해 줘요.',['panel']);
   st('hdmi','모니터 케이블 → 그래픽카드',S.conn.c_hdmi==='hdmiGpu',S.conn.c_hdmi==='hdmiMobo'?'모니터 케이블이 메인보드 HDMI에 꽂혀 있어요. 그래픽카드를 쓰면(특히 내장 그래픽이 없는 F 모델이면) 그래픽카드 쪽 단자에 꽂아야 화면이 나와요.':'모니터에서 나온 HDMI 케이블 끝을 케이스 뒤쪽 그래픽카드 HDMI 단자에 꽂아 주세요.','화면 신호는 그래픽카드가 만들어요.',['c_hdmi','hdmiGpu']);
@@ -873,8 +879,9 @@ function cableOf(c){
   const w=d.w,h=d.h;ctx.fillStyle=d.col;rr(-w/2,-h/2,w,h,2);ctx.fill();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1;ctx.stroke();
   if(d.lab&&d.t!=='fp2')txt(d.lab,0,0,7,'#ffd27a','center',800);
   if(d.t==='fp2'){
-    if(d.pol){const fl=S.rot[c];txt('+',fl?w/2-5:-w/2+5,0,8,'#ff7b72','center',900);txt('−',fl?-w/2+5:w/2-5,0,8,'#79c0ff','center',900);}
-    if(cam.s>.9)txt(d.lab,0,-h/2-6,6.5,'#fff','center',800);
+    txt(d.sh,0,.3,5.6,'#fff','center',900);
+    if(d.pol){const fl=S.rot[c];txt('+',fl?w/2-3.5:-w/2+3.5,0,7,'#ff8a80','center',900);txt('−',fl?-w/2+3.5:w/2-3.5,0,7,'#8ec5ff','center',900);}
+    if(!S.conn[c]&&cam.s>.9)txt(d.lab,0,-h/2-6,6.5,'#fff','center',800);
   }
   if(d.t==='atx24'){ctx.fillStyle='#555';for(let k=0;k<12;k++){ctx.fillRect(-7,-h/2+4+k*4.3,5,3);ctx.fillRect(2,-h/2+4+k*4.3,5,3);}}
   ctx.restore();
@@ -919,7 +926,7 @@ function draw(){
     }
   }
   // 힌트 강조
-  if(hl){const t=(performance.now()-hl.t0)/1000;if(t>6)hl=null;else{const a=.5+.5*Math.sin(t*6);for(const id of hl.ids){const r=rectOf(id);if(!r)continue;ctx.strokeStyle=`rgba(255,194,71,${.4+.6*a})`;ctx.lineWidth=4/cam.s+2;rr(r.x-8,r.y-8,r.w+16,r.h+16,8);ctx.stroke();}}}
+  if(hl){const t=(performance.now()-hl.t0)/1000;if(t>6)hl=null;else{const a=.5+.5*Math.sin(t*6);for(const id of hl.ids){const r=rectOf(id);if(!r)continue;const pd=5/cam.s;ctx.strokeStyle=`rgba(255,194,71,${.45+.55*a})`;ctx.lineWidth=2.5/cam.s;rr(r.x-pd,r.y-pd,r.w+2*pd,r.h+2*pd,4/cam.s);ctx.stroke();}}}
   // 과열 종료
   if(run&&run.d.overheat&&runPhase()>run.d.overheat){run=null;toast('CPU 과열로 전원이 꺼졌어요. ? 버튼에서 원인을 확인해 보세요','bad',5000);}
 }

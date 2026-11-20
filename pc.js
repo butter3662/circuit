@@ -3,7 +3,7 @@
 'use strict';
 
 /* ================= 기본 치수 (월드 단위, 약 1.6 단위 = 1 mm) ================= */
-const MATW=800,MATH=1150,CASEW=880,CASEH=1150;
+const MATW=800,MATH=1150,CASEW=780,CASEH=870;
 const MB={w:390,h:488};
 const PD={
   mobo:{w:390,h:488,nm:'메인보드'},
@@ -31,12 +31,12 @@ const CD={
   c_eps8:{t:'eps8',nm:'CPU 전원(8핀 EPS)',col:'#2b2b2b',w:22,h:24,an:['part','psu',240,55],rel:[110,-60],thick:6,lab:'CPU'},
   c_pcie8:{t:'pcie8',nm:'그래픽카드 전원(8핀 PCIe)',col:'#2b2b2b',w:22,h:24,an:['part','psu',240,75],rel:[150,-10],thick:6,lab:'PCIe'},
   c_sata:{t:'sata',nm:'SATA 전원(이번 조립에는 쓰지 않음)',col:'#2b2b2b',w:26,h:10,an:['part','psu',240,95],rel:[90,50],thick:4},
-  c_pwrsw:{t:'fp2',nm:'전원 스위치(POWER SW)',col:'#8a8f98',w:28,h:11,sh:'PWR',an:['case',815,560],rel:[-110,-150],lab:'POWER SW'},
-  c_rstsw:{t:'fp2',nm:'리셋 스위치(RESET SW)',col:'#8a8f98',w:28,h:11,sh:'RST',an:['case',815,560],rel:[-110,-110],lab:'RESET SW'},
-  c_pled:{t:'fp2',nm:'전원 LED(POWER LED +/−)',col:'#8a8f98',w:28,h:11,sh:'PLED',an:['case',815,560],rel:[-110,-70],lab:'POWER LED',pol:true},
-  c_hdled:{t:'fp2',nm:'HDD LED(+/−)',col:'#8a8f98',w:28,h:11,sh:'HDD',an:['case',815,560],rel:[-110,-30],lab:'HDD LED',pol:true},
-  c_usb3:{t:'usb3',nm:'전면 USB 3.0(19핀)',col:'#2f6fd6',w:20,h:44,an:['case',815,560],rel:[-110,20],thick:6},
-  c_audio:{t:'audio',nm:'전면 오디오(HD AUDIO)',col:'#2b2b2b',w:30,h:12,an:['case',815,560],rel:[-110,80],thick:3},
+  c_pwrsw:{t:'fp2',nm:'전원 스위치(POWER SW)',col:'#8a8f98',w:28,h:11,sh:'PWR',an:['case',494,560],rel:[110,-130],lab:'POWER SW'},
+  c_rstsw:{t:'fp2',nm:'리셋 스위치(RESET SW)',col:'#8a8f98',w:28,h:11,sh:'RST',an:['case',494,560],rel:[110,-90],lab:'RESET SW'},
+  c_pled:{t:'fp2',nm:'전원 LED(POWER LED +/−)',col:'#8a8f98',w:28,h:11,sh:'PLED',an:['case',494,560],rel:[110,-50],lab:'POWER LED',pol:true},
+  c_hdled:{t:'fp2',nm:'HDD LED(+/−)',col:'#8a8f98',w:28,h:11,sh:'HDD',an:['case',494,560],rel:[110,-10],lab:'HDD LED',pol:true},
+  c_usb3:{t:'usb3',nm:'전면 USB 3.0(19핀)',col:'#2f6fd6',w:20,h:44,an:['case',494,560],rel:[110,40],thick:6},
+  c_audio:{t:'audio',nm:'전면 오디오(HD AUDIO)',col:'#2b2b2b',w:30,h:12,an:['case',494,560],rel:[110,100],thick:3},
   c_hdmi:{t:'hdmi',nm:'모니터 케이블(HDMI)',col:'#1d1d1d',w:26,h:14,an:['mat',200,1040],rel:[200,40],thick:6},
   c_ac:{t:'ac',nm:'전원 케이블',col:'#1d1d1d',w:26,h:22,an:['mat',445,1095],rel:[110,0],thick:7}
 };
@@ -59,16 +59,16 @@ let run=null,lastDiag=null;
 let MO={x:0,y:0},CO={x:MATW,y:0},WW=MATW+CASEW,WH=MATH,portrait=false;
 function layout(w,h){
   portrait=h>w*1.15;
-  if(portrait){MO={x:40,y:0};CO={x:0,y:MATH};WW=CASEW;WH=MATH+CASEH;}
-  else{MO={x:0,y:0};CO={x:MATW,y:0};WW=MATW+CASEW;WH=MATH;}
+  if(portrait){MO={x:20,y:0};WW=MATW+40;CO={x:(WW-CASEW)/2,y:MATH};WH=MATH+CASEH;}
+  else{MO={x:0,y:0};CO={x:MATW,y:(MATH-CASEH)/2};WW=MATW+CASEW;WH=MATH;}
 }
 
 /* ================= 위치 계산 ================= */
 function partRect(id){
   const d=PD[id],k=S.inst[id];
   if(id==='mobo'){if(k)return{x:CO.x+70,y:CO.y+80,w:MB.w,h:MB.h,inst:true};}
-  else if(id==='psu'){if(k)return{x:CO.x+70,y:CO.y+905,w:240,h:138,inst:true};}
-  else if(id==='panel'){if(k)return{x:CO.x+20,y:CO.y+30,w:840,h:1080,inst:true};}
+  else if(id==='psu'){if(k)return{x:CO.x+70,y:CO.y+625,w:240,h:138,inst:true};}
+  else if(id==='panel'){if(k)return{x:CO.x+20,y:CO.y+30,w:740,h:800,inst:true};}
   else if(k){
     const m=partRect('mobo');
     if(id==='cpu')return{x:m.x+120,y:m.y+80,w:60,h:72,inst:true};
@@ -90,8 +90,8 @@ function slots(){
   L.push({id:'m2slot',acc:'m2',x:m.x+60,y:m.y+248,w:146,h:40});
   L.push({id:'pcie',acc:'gpu',x:m.x+40,y:m.y+300,w:180,h:14,pady:40});
   L.push({id:'tray',acc:'mobo',x:CO.x+70,y:CO.y+80,w:MB.w,h:MB.h});
-  L.push({id:'psubay',acc:'psu',x:CO.x+70,y:CO.y+905,w:240,h:138});
-  L.push({id:'caseside',acc:'panel',x:CO.x+20,y:CO.y+30,w:840,h:1080});
+  L.push({id:'psubay',acc:'psu',x:CO.x+70,y:CO.y+625,w:240,h:138});
+  L.push({id:'caseside',acc:'panel',x:CO.x+20,y:CO.y+30,w:740,h:800});
   return L;
 }
 function headers(){
@@ -110,7 +110,7 @@ function headers(){
   if(S.inst.gpu)H('gpupwr','pcie8',326,282,48,14,'그래픽카드 8핀');
   if(S.inst.mobo)L.push({id:'hdmiMobo',t:'hdmi',x:CO.x+24,y:CO.y+190,w:32,h:14,nm:'메인보드 HDMI'});
   if(S.inst.gpu)L.push({id:'hdmiGpu',t:'hdmi',x:CO.x+24,y:CO.y+384,w:32,h:14,nm:'그래픽카드 HDMI'});
-  if(S.inst.psu)L.push({id:'acin',t:'ac',x:CO.x+24,y:CO.y+925,w:32,h:26,nm:'파워 전원 입력'});
+  if(S.inst.psu)L.push({id:'acin',t:'ac',x:CO.x+24,y:CO.y+645,w:32,h:26,nm:'파워 전원 입력'});
   return L;
 }
 const hdrById=id=>headers().find(h=>h.id===id);
@@ -127,9 +127,9 @@ function endPos(c){
 }
 function caseInter(){return{
   covers:[0,1,2,3].map(i=>({id:'cover'+i,x:CO.x+22,y:CO.y+376+i*32,w:36,h:30})),
-  psusw:{id:'psusw',x:CO.x+24,y:CO.y+960,w:32,h:24},
-  pwrbtn:{id:'pwrbtn',x:CO.x+826,y:CO.y+70,w:28,h:28},
-  rstbtn:{id:'rstbtn',x:CO.x+830,y:CO.y+110,w:20,h:16}
+  psusw:{id:'psusw',x:CO.x+24,y:CO.y+680,w:32,h:24},
+  pwrbtn:{id:'pwrbtn',x:CO.x+726,y:CO.y+70,w:28,h:28},
+  rstbtn:{id:'rstbtn',x:CO.x+730,y:CO.y+110,w:20,h:16}
 };}
 function moboInter(){
   const m=moboR(),L=[{id:'lever',x:m.x+190,y:m.y+64,w:18,h:104}];
@@ -169,6 +169,7 @@ function applyState(d){
   S=Object.assign(f,d);
   for(const k of ['loose','inst','rot','latch','conn','cend'])S[k]=Object.assign(f[k],d[k]||{});
   if(!Array.isArray(S.covers)||S.covers.length!==4)S.covers=[1,1,1,1];
+  for(const c of['c_pwrsw','c_rstsw','c_pled','c_hdled','c_usb3','c_audio'])if(S.cend[c]&&S.cend[c].x===-110)S.cend[c]={x:CD[c].rel[0],y:CD[c].rel[1]};
   S.order=(Array.isArray(d.order)?d.order.filter(x=>PD[x]):[]);for(const id of PIDS)if(!S.order.includes(id))S.order.push(id);
   run=null;lastDiag=null;
 }
@@ -303,7 +304,7 @@ function canRemove(id){
 let held=null,act=null;const ptrs=new Map();
 const toW=(sx,sy)=>({x:(sx-cam.x)/cam.s,y:(sy-cam.y)/cam.s});
 const inR=(p,r,pad=0,pady)=>p.x>=r.x-(r.padx||0)-pad&&p.x<=r.x+r.w+(r.padx||0)+pad&&p.y>=r.y-(r.pady||0)-(pady??pad)&&p.y<=r.y+r.h+(r.pady||0)+(pady??pad);
-function panelBlocks(p){return S.inst.panel&&p.x>CO.x+60&&p.x<CO.x+820&&p.y>CO.y+40&&p.y<CO.y+1100;}
+function panelBlocks(p){return S.inst.panel&&p.x>CO.x+60&&p.x<CO.x+720&&p.y>CO.y+40&&p.y<CO.y+820;}
 function hitConn(p){
   const pad=10/cam.s;let best=null,bd=1e9;
   for(const c of CIDS){
@@ -655,14 +656,35 @@ function drawMat(){
 }
 function drawCaseBack(){
   const x=CO.x,y=CO.y;
-  ctx.fillStyle='#1f242b';rr(x+20,y+30,840,1080,18);ctx.fill();
-  ctx.fillStyle='#14181d';rr(x+60,y+40,760,1060,8);ctx.fill();
+  ctx.fillStyle='#1f242b';rr(x+20,y+30,740,800,18);ctx.fill();
+  ctx.fillStyle='#14181d';rr(x+60,y+40,660,780,8);ctx.fill();
+  // 메인보드 받침판(트레이)과 CPU 뒷면 구멍
+  ctx.fillStyle='#181d23';rr(x+62,y+72,410,510,6);ctx.fill();
+  ctx.fillStyle='#0b0e12';rr(x+150,y+120,150,150,10);ctx.fill();
+  ctx.strokeStyle='#232931';ctx.lineWidth=2;rr(x+150,y+120,150,150,10);ctx.stroke();
+  // 위쪽 통풍구
+  ctx.fillStyle='#0b0e12';for(let k=0;k<22;k++)rr(x+110+k*24,y+48,14,14,3),ctx.fill();
+  // 케이블 정리 구멍(고무 그로밋)
+  for(const[gy,gh]of[[96,130],[262,150],[448,124]]){ctx.fillStyle='#07090b';rr(x+480,y+gy,28,gh,14);ctx.fill();ctx.strokeStyle='#2c323b';ctx.lineWidth=5;rr(x+480,y+gy,28,gh,14);ctx.stroke();ctx.strokeStyle='#14181d';ctx.lineWidth=1.5;for(let k=1;k<gh/12;k++){ctx.beginPath();ctx.moveTo(x+494,y+gy+k*12);ctx.lineTo(x+494,y+gy+k*12+5);ctx.stroke();}}
+  // 케이블 타이 고리
+  ctx.fillStyle='#3a414c';for(let k=0;k<6;k++){rr(x+530,y+110+k*85,10,6,2);ctx.fill();}
+  // 앞쪽 흡기 팬 3개(옆에서 비스듬히 본 모습)
+  const fsp=runPhase()!==null?runPhase()*14:0,hues=['#4ea8ff','#b16cff','#ff5ca8'];
+  for(let i=0;i<3;i++){
+    const fy=y+70+i*178;
+    ctx.fillStyle='#1b1f25';rr(x+628,fy,82,172,12);ctx.fill();
+    ctx.save();ctx.beginPath();ctx.ellipse(x+669,fy+86,30,78,0,0,7);ctx.fillStyle='#0b0d10';ctx.fill();ctx.clip();
+    ctx.fillStyle='#2b3038';for(let k=0;k<7;k++){const yy=fy+10+((k*24+fsp*40)%156);ctx.beginPath();ctx.ellipse(x+669,yy,26,7,0,0,7);ctx.fill();}
+    ctx.restore();
+    ctx.strokeStyle=run?hues[i]:'#2e3540';ctx.lineWidth=run?4:3;ctx.beginPath();ctx.ellipse(x+669,fy+86,32,80,0,0,7);ctx.stroke();
+    ctx.fillStyle='#22262d';ctx.beginPath();ctx.ellipse(x+669,fy+86,9,20,0,0,7);ctx.fill();
+  }
   // 스탠드오프
   ctx.fillStyle='#b9a36a';for(const[a,b]of[[12,12],[195,12],[378,12],[12,250],[195,250],[378,250],[12,476],[195,476],[378,476]]){ctx.beginPath();ctx.arc(x+70+a,y+80+b,5,0,7);ctx.fill();}
-  txt('케이스 (옆으로 눕혀 둔 상태)',x+440,y+20,13,'#6e7d91','center',700);
-  txt('뒤쪽',x+40,y+20,12,'#6e7d91','center');txt('앞쪽',x+840,y+20,12,'#6e7d91','center');
+  txt('케이스 (옆으로 눕혀 둔 상태)',x+390,y+20,13,'#6e7d91','center',700);
+  txt('뒤쪽',x+40,y+20,12,'#6e7d91','center');txt('앞쪽',x+740,y+20,12,'#6e7d91','center');
   // 뒤판
-  ctx.fillStyle='#2a3038';ctx.fillRect(x+20,y+40,40,1060);
+  ctx.fillStyle='#2a3038';ctx.fillRect(x+20,y+40,40,780);
   ctx.fillStyle='#0d1014';ctx.fillRect(x+24,y+92,32,196);
   if(!S.inst.mobo)txt('I/O',x+40,y+190,10,'#555','center');
   // 확장 슬롯 덮개
@@ -676,35 +698,39 @@ function drawCaseBack(){
   ctx.fillStyle='#262b33';ctx.fillRect(x+60,y+96,34,140);ctx.fillStyle='#3a414c';for(let k=0;k<7;k++){ctx.fillRect(x+64,y+102+((k*20+sp*30)%130),26,6);}
   txt('후면 팬',x+77,y+248,9,'#8b9bb0','center');
   // 파워 칸
-  ctx.strokeStyle='#39424e';ctx.setLineDash([6,5]);ctx.lineWidth=2;ctx.strokeRect(x+70,y+905,240,138);ctx.setLineDash([]);
-  if(!S.inst.psu)txt('파워 칸',x+190,y+975,14,'#55606e','center',700);
+  ctx.strokeStyle='#39424e';ctx.setLineDash([6,5]);ctx.lineWidth=2;ctx.strokeRect(x+70,y+625,240,138);ctx.setLineDash([]);
+  if(!S.inst.psu)txt('파워 칸',x+190,y+695,14,'#55606e','center',700);
   // 뒤판 단자: AC 입력, 스위치
   ctx.fillStyle='#2a3038';
   // 앞면 패널 스트립
-  ctx.fillStyle='#262c34';ctx.fillRect(x+820,y+40,40,1060);
+  ctx.fillStyle='#262c34';ctx.fillRect(x+720,y+40,40,780);
   const ledP=run&&S.conn.c_pled==='fpPLED'&&!S.rot.c_pled;
   const ph=runPhase();
   const ledH=run&&S.conn.c_hdled==='fpHDLED'&&!S.rot.c_hdled&&ph>1&&ph<7&&Math.floor(ph*7)%2;
-  ctx.fillStyle='#0d0f12';ctx.beginPath();ctx.arc(x+840,y+84,14,0,7);ctx.fill();
-  ctx.strokeStyle=ledP?'#5ad1ff':'#555c66';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+840,y+84,10,0,7);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(x+840,y+76);ctx.lineTo(x+840,y+84);ctx.stroke();
-  ctx.fillStyle='#3a414c';rr(x+832,y+110,16,14,3);ctx.fill();
-  ctx.fillStyle=ledH?'#ff5a5a':'#3a1d1d';ctx.beginPath();ctx.arc(x+840,y+140,3.5,0,7);ctx.fill();
-  txt('전원',x+840,y+58,9,'#8b9bb0','center');txt('리셋',x+840,y+132,8,'#8b9bb0','center');
-  ctx.fillStyle='#3a414c';for(let k=0;k<2;k++)ctx.fillRect(x+834,y+160+k*18,12,10);
-  ctx.fillStyle='#1d3e7a';ctx.fillRect(x+836,y+162,8,6);ctx.fillRect(x+836,y+180,8,6);
+  ctx.fillStyle='#0d0f12';ctx.beginPath();ctx.arc(x+740,y+84,14,0,7);ctx.fill();
+  ctx.strokeStyle=ledP?'#5ad1ff':'#555c66';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+740,y+84,10,0,7);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+740,y+76);ctx.lineTo(x+740,y+84);ctx.stroke();
+  ctx.fillStyle='#3a414c';rr(x+732,y+110,16,14,3);ctx.fill();
+  ctx.fillStyle=ledH?'#ff5a5a':'#3a1d1d';ctx.beginPath();ctx.arc(x+740,y+140,3.5,0,7);ctx.fill();
+  txt('전원',x+740,y+58,9,'#8b9bb0','center');txt('리셋',x+740,y+132,8,'#8b9bb0','center');
+  ctx.fillStyle='#3a414c';for(let k=0;k<2;k++)ctx.fillRect(x+734,y+160+k*18,12,10);
+  ctx.fillStyle='#1d3e7a';ctx.fillRect(x+736,y+162,8,6);ctx.fillRect(x+736,y+180,8,6);
   // 파워 덮개(슈라우드)
-  ctx.fillStyle='rgba(38,44,52,.95)';ctx.fillRect(x+320,y+890,500,210);
-  ctx.fillStyle='#0d1014';for(const gx of[380,520,660]){rr(x+gx,y+905,70,26,10);ctx.fill();}
-  txt('파워 덮개',x+570,y+1000,13,'#55606e','center',700);
-  ctx.strokeStyle='#39424e';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+60,y+890);ctx.lineTo(x+320,y+890);ctx.stroke();
+  ctx.fillStyle='rgba(38,44,52,.95)';ctx.fillRect(x+320,y+610,400,210);
+  ctx.fillStyle='#0d1014';for(const gx of[370,470,570]){rr(x+gx,y+625,62,24,10);ctx.fill();}
+  ctx.fillStyle='#1c2128';rr(x+566,y+664,146,146,6);ctx.fill();ctx.strokeStyle='#3a414c';ctx.lineWidth=2;rr(x+566,y+664,146,146,6);ctx.stroke();
+  for(let k=0;k<2;k++){ctx.fillStyle='#2a3038';rr(x+576,y+676+k*62,126,48,4);ctx.fill();ctx.fillStyle='#14181d';ctx.fillRect(x+686,y+688+k*62,10,24);}
+  txt('HDD 칸',x+639,y+654,9,'#55606e','center',700);
+  ctx.fillStyle='#0d1014';for(let k=0;k<10;k++){rr(x+340+k*20,y+760,10,40,3);ctx.fill();}
+  txt('AIRFLOW',x+445,y+712,22,'rgba(255,255,255,.07)','center',900);
+  ctx.strokeStyle='#39424e';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+60,y+610);ctx.lineTo(x+320,y+610);ctx.stroke();
 }
 function drawCaseRear(){
   const x=CO.x,y=CO.y;
   if(S.inst.psu){
-    ctx.fillStyle='#111';ctx.fillRect(x+24,y+925,32,26);ctx.fillStyle='#777';for(let k=0;k<3;k++)ctx.fillRect(x+30+k*8,y+934,4,9);
-    ctx.fillStyle='#111';ctx.fillRect(x+24,y+960,32,24);ctx.fillStyle=S.psuSw?'#d33':'#555';ctx.fillRect(x+28,y+(S.psuSw?962:972),24,10);
-    txt(S.psuSw?'I':'O',x+40,y+(S.psuSw?967:977),9,'#fff','center',800);
+    ctx.fillStyle='#111';ctx.fillRect(x+24,y+645,32,26);ctx.fillStyle='#777';for(let k=0;k<3;k++)ctx.fillRect(x+30+k*8,y+654,4,9);
+    ctx.fillStyle='#111';ctx.fillRect(x+24,y+680,32,24);ctx.fillStyle=S.psuSw?'#d33':'#555';ctx.fillRect(x+28,y+(S.psuSw?682:692),24,10);
+    txt(S.psuSw?'I':'O',x+40,y+(S.psuSw?687:697),9,'#fff','center',800);
   }
   if(S.inst.mobo){ctx.fillStyle='#ccc';ctx.fillRect(x+28,y+100,24,12);ctx.fillRect(x+28,y+118,24,12);ctx.fillStyle='#222';ctx.fillRect(x+26,y+190,28,14);txt('HDMI',x+40,y+210,7,'#9aa','center');
     ctx.fillStyle='#3a6';ctx.fillRect(x+30,y+240,8,8);ctx.fillStyle='#c33';ctx.fillRect(x+42,y+240,8,8);}

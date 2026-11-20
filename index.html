@@ -106,6 +106,7 @@ input[type=range]{width:100%;margin:8px 0 2px;accent-color:#3fb6ff}
   <div class="brand"><i class="logo"><svg viewBox="0 0 24 24"><path d="M13.5 2 4.5 13.5H11L10 22l9-11.5h-6.5z" fill="#111"/></svg></i><span>회로 시뮬레이터</span></div>
   <div class="sp"></div>
   <div id="time">t = 0.00 s</div>
+  <button class="hb txt" id="bpc" title="PC 조립 모드">PC</button>
   <button class="hb txt" id="b3d" title="3D 보기">3D</button>
   <button class="hb on" id="bplay" title="재생/정지 (Space)"></button>
   <button class="hb" id="bundo" title="실행 취소 (Ctrl+Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
@@ -136,6 +137,7 @@ input[type=range]{width:100%;margin:8px 0 2px;accent-color:#3fb6ff}
 <div class="ov" id="menu"><div class="sheet">
   <h3>계정</h3>
   <button class="btn pri acctbtn" id="bacct">계정·클라우드 저장<small id="acctst">로그인 안 됨</small></button>
+  <button class="btn pri acctbtn" id="bpc2" style="margin-top:6px">PC 조립 모드<small>컴퓨터를 직접 조립해 본다</small></button>
   <h3>예제 회로</h3>
   <div class="g2" id="exlist"></div>
   <h3>시뮬레이션</h3>
@@ -1167,7 +1169,7 @@ window.addEventListener('keydown',ev=>{
 
 /* ================= 계정·클라우드 저장 (Supabase) ================= */
 const SB_URL='https://ictjkqbbcaigdvlysdaw.supabase.co',SB_KEY='sb_publishable_C7jZEKJn_nF2Y3Ngq5f80Q_RA5Wrfux';
-let sb=null,user=null,cloudId=null,cloudName='',cloudList=[],delArm=null,busy=false;
+let sb=null,user=null,cloudId=null,cloudName='',cloudList=[],delArm=null,busy=false;const authCbs=[];
 try{if(window.supabase)sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});}catch(e){sb=null;}
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function amsg(t,err){const m=$('amsg');m.style.color=err?'#ff9b94':'#ffc247';m.textContent=t||'';}
@@ -1229,13 +1231,17 @@ async function acctAct(a,id){
 }
 $('acctbody').addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(b)acctAct(b.dataset.act,b.dataset.id);});
 $('acctbody').addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.id==='apw')acctAct('in');});
-$('bacct').onclick=()=>{menu.classList.remove('show');$('acct').classList.add('show');amsg('');renderAcct();if(user)refreshList();};
+function openAcct(top){menu.classList.remove('show');const a=$('acct');a.style.zIndex=top?'40':'';a.classList.add('show');amsg('');renderAcct();if(user)refreshList();}
+$('bacct').onclick=()=>openAcct(false);
+window.CircuitAuth={get sb(){return sb},get user(){return user},on(cb){authCbs.push(cb);},openAcct:()=>openAcct(true)};
+$('bpc').onclick=()=>{if(window.PCMode)PCMode.open();};
+$('bpc2').onclick=()=>{closeOv();if(window.PCMode)PCMode.open();};
 $('aclose').onclick=closeOv;
 $('acct').onclick=ev=>{if(ev.target===$('acct'))closeOv();};
 async function initAuth(){
   renderAcct();updAcctBtn();if(!sb)return;
   try{const{data}=await sb.auth.getSession();user=data.session?data.session.user:null;}catch(e){user=null;}
-  sb.auth.onAuthStateChange((ev,ses)=>{const nu=ses?ses.user:null;const changedUser=(nu&&nu.id)!==(user&&user.id);user=nu;if(!user){cloudList=[];cloudId=null;}updAcctBtn();if(changedUser){renderAcct();if(user)setTimeout(refreshList,0);}});
+  sb.auth.onAuthStateChange((ev,ses)=>{const nu=ses?ses.user:null;const changedUser=(nu&&nu.id)!==(user&&user.id);user=nu;if(!user){cloudList=[];cloudId=null;}updAcctBtn();if(changedUser){renderAcct();if(user)setTimeout(refreshList,0);setTimeout(()=>authCbs.forEach(f=>{try{f(user)}catch(e){}}),0);}});
   updAcctBtn();renderAcct();
 }
 
@@ -1268,6 +1274,7 @@ function sample(t){
   if(hist.length>600)hist.shift();
 }
 function frame(now){
+  if(window.PCMode&&PCMode.isOpen()){last=now;requestAnimationFrame(frame);return;}
   const dtr=Math.min(.05,Math.max(0,(now-last)/1000));last=now;
   sim.hasAC=false;sim.acF=0;
   for(const e of els)if(e.t==='acsource'||(e.t==='emcoil'&&e.em==='per')){sim.hasAC=true;sim.acF=sim.acF?Math.min(sim.acF,e.f):e.f;}
@@ -1310,5 +1317,6 @@ setTimeout(()=>showHint('아래에서 부품을 골라 격자점 사이를 끌�
 requestAnimationFrame(frame);
 })();
 </script>
+<script src="pc.js"></script>
 </body>
 </html>

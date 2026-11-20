@@ -159,7 +159,7 @@ async function loadCloud(){
   try{
     const{data,error}=await A.sb.from('pc_build_progress').select('data,updated_at').eq('user_id',A.user.id).maybeSingle();
     if(error)throw error;
-    if(data&&data.data&&(data.data.savedAt||0)>(S.savedAt||0)){applyState(data.data);toast('계정에 저장된 조립 진행상황을 불러왔다');try{localStorage.setItem(LKEY,JSON.stringify(S));}catch(e){}}
+    if(data&&data.data&&(data.data.savedAt||0)>(S.savedAt||0)){applyState(data.data);toast('계정에 저장된 조립 진행상황을 불러왔어요');try{localStorage.setItem(LKEY,JSON.stringify(S));}catch(e){}}
     else if(!data&&S.savedAt)saveCloud();
     setCloud('saved');
   }catch(e){setCloud('error');}
@@ -228,13 +228,13 @@ function build(){
   document.body.appendChild(root);
   cv=document.getElementById('pcCv');ctx=cv.getContext('2d');
   document.getElementById('pcBack').onclick=close;
-  document.getElementById('pcQ').onclick=showHint;
+  document.getElementById('pcQ').onclick=()=>{document.getElementById('pcHint').classList.contains('show')?hideHint():showHint();};
   document.getElementById('pcHint').onclick=e=>{if(e.target.id==='pcHint')hideHint();};
   let resetArm=0;
   document.getElementById('pcReset').onclick=e=>{
     const b=e.currentTarget;
-    if(Date.now()-resetArm>3000){resetArm=Date.now();b.textContent='한 번 더 누르면 초기화';setTimeout(()=>b.textContent='처음부터',3000);return;}
-    resetArm=0;b.textContent='처음부터';S=fresh();run=null;lastDiag=null;changed();fit();toast('부품을 모두 매트 위로 되돌렸다');
+    if(Date.now()-resetArm>3000){resetArm=Date.now();b.textContent='한 번 더 누르면 초기화돼요';setTimeout(()=>b.textContent='처음부터',3000);return;}
+    resetArm=0;b.textContent='처음부터';S=fresh();run=null;lastDiag=null;changed();fit();toast('부품을 모두 매트 위로 되돌렸어요');
   };
   document.getElementById('pcCloud').onclick=()=>{const A=window.CircuitAuth;if(A&&!A.user&&A.openAcct)A.openAcct();};
   document.getElementById('pcZi').onclick=()=>zoomAt(W/2,H/2,1.25);
@@ -254,47 +254,47 @@ function toast(msg,kind,ms){const t=document.getElementById('pcToast');t.textCon
 const ramOf=s=>S.inst.ram1===s?'ram1':S.inst.ram2===s?'ram2':null;
 function canInstall(id,slot){
   const t=ptype(id);
-  if(run)return'전원이 켜져 있다. 전원을 끈 뒤 작업하라';
-  if(slot.acc!==t)return'여기에는 맞지 않는 부품이다';
-  if(S.inst.panel&&['tray','psubay','pcie'].includes(slot.id)||S.inst.panel&&S.inst.mobo&&['socket','coolerSlot','m2slot','A1','A2','B1','B2'].includes(slot.id))return'측면 패널이 닫혀 있다. 패널을 먼저 떼어 내라';
+  if(run)return'전원이 켜져 있어요. 먼저 전원을 꺼 주세요';
+  if(slot.acc!==t)return'여기에 맞는 부품이 아니에요';
+  if(S.inst.panel&&['tray','psubay','pcie'].includes(slot.id)||S.inst.panel&&S.inst.mobo&&['socket','coolerSlot','m2slot','A1','A2','B1','B2'].includes(slot.id))return'측면 패널이 닫혀 있어요. 패널부터 떼어 주세요';
   switch(slot.id){
     case'socket':
-      if(S.inst.cpu)return'소켓에 이미 CPU가 있다';
-      if(S.lever!=='open')return'소켓 레버가 내려가 있다. 소켓 오른쪽의 레버를 눌러 먼저 올려라';
-      if(S.rot.cpu!==0)return'CPU 방향이 맞지 않는다. CPU의 금색 삼각형을 소켓의 삼각형(왼쪽 위)에 맞춰라. CPU를 탭하면 90°씩 돈다';
+      if(S.inst.cpu)return'소켓에 이미 CPU가 있어요';
+      if(S.lever!=='open')return'소켓 레버가 내려가 있어요. 소켓 오른쪽 레버를 눌러 먼저 올려 주세요';
+      if(S.rot.cpu!==0)return'CPU 방향이 안 맞아요. CPU의 금색 삼각형을 소켓 왼쪽 위 삼각형에 맞춰 주세요. CPU를 탭하면 90°씩 돌아가요';
       return null;
     case'coolerSlot':
-      if(S.inst.cooler)return'이미 쿨러가 있다';
-      if(!S.inst.cpu)return'CPU를 먼저 장착하라';
-      if(S.lever!=='closed')return'소켓 레버를 먼저 내려 CPU를 고정하라';
+      if(S.inst.cooler)return'이미 쿨러가 달려 있어요';
+      if(!S.inst.cpu)return'CPU부터 장착해 주세요';
+      if(S.lever!=='closed')return'소켓 레버를 먼저 내려서 CPU를 고정해 주세요';
       return null;
     case'A1':case'A2':case'B1':case'B2':
-      if(ramOf(slot.id))return'그 슬롯에는 이미 램이 꽂혀 있다';
-      if(!S.latch[slot.id])return`${slot.id} 슬롯의 래치(아래쪽 걸쇠)가 닫혀 있다. 래치를 눌러 먼저 열어라`;
-      if(S.rot[id]!==0)return'램의 홈(노치) 위치가 슬롯 돌기와 맞지 않는다. 램을 탭해 180° 돌려라';
+      if(ramOf(slot.id))return'그 슬롯에는 이미 램이 꽂혀 있어요';
+      if(!S.latch[slot.id])return`${slot.id} 슬롯 아래쪽 래치(걸쇠)가 닫혀 있어요. 래치를 눌러 먼저 열어 주세요`;
+      if(S.rot[id]!==0)return'램의 홈(노치)이 슬롯 돌기와 안 맞아요. 램을 탭해서 180° 돌려 주세요';
       return null;
-    case'm2slot':if(S.inst.m2)return'이미 SSD가 있다';return null;
+    case'm2slot':if(S.inst.m2)return'이미 SSD가 꽂혀 있어요';return null;
     case'pcie':
-      if(S.inst.gpu)return'이미 그래픽카드가 있다';
-      if(!S.inst.mobo)return'그래픽카드는 메인보드를 케이스에 넣은 뒤 장착한다(케이스 뒤판에 브래킷을 고정해야 한다)';
-      if(S.covers[0]||S.covers[1])return'케이스 뒤쪽의 확장 슬롯 덮개 2개를 먼저 떼어 내라(그래픽카드가 2칸을 차지한다)';
+      if(S.inst.gpu)return'이미 그래픽카드가 꽂혀 있어요';
+      if(!S.inst.mobo)return'그래픽카드는 메인보드를 케이스에 넣은 다음에 꽂아요(브래킷을 케이스 뒤판에 고정해야 하거든요)';
+      if(S.covers[0]||S.covers[1])return'케이스 뒤쪽 확장 슬롯 덮개 2개를 먼저 떼어 주세요(그래픽카드가 2칸을 차지해요)';
       return null;
-    case'tray':if(S.inst.mobo)return'이미 메인보드가 있다';return null;
-    case'psubay':if(S.inst.psu)return'이미 파워가 있다';return null;
-    case'caseside':if(S.inst.panel)return'이미 패널이 닫혀 있다';return null;
+    case'tray':if(S.inst.mobo)return'이미 메인보드가 들어가 있어요';return null;
+    case'psubay':if(S.inst.psu)return'이미 파워가 들어가 있어요';return null;
+    case'caseside':if(S.inst.panel)return'이미 패널이 닫혀 있어요';return null;
   }
   return null;
 }
 function canRemove(id){
   const r=partRect(id);
   if(!r.inst)return null;
-  if(run)return'전원이 켜져 있다. 전원을 끈 뒤 작업하라';
-  if(S.inst.panel&&id!=='panel'&&id!=='psu')return'측면 패널이 닫혀 있다. 패널을 먼저 떼어 내라';
-  if(S.inst.panel&&id==='psu')return'측면 패널이 닫혀 있다. 패널을 먼저 떼어 내라';
+  if(run)return'전원이 켜져 있어요. 먼저 전원을 꺼 주세요';
+  if(S.inst.panel&&id!=='panel'&&id!=='psu')return'측면 패널이 닫혀 있어요. 패널부터 떼어 주세요';
+  if(S.inst.panel&&id==='psu')return'측면 패널이 닫혀 있어요. 패널부터 떼어 주세요';
   switch(id){
-    case'cpu':if(S.inst.cooler)return'쿨러가 CPU를 덮고 있다. 쿨러를 먼저 빼라';if(S.lever!=='open')return'소켓 레버를 올려야 CPU를 뺄 수 있다';break;
-    case'ram1':case'ram2':if(S.latch[S.inst[id]]===0)return'래치가 닫혀 램이 고정되어 있다. 슬롯 아래 래치를 눌러 열어라';break;
-    case'mobo':if(S.inst.gpu)return'그래픽카드가 케이스에 고정되어 있다. 그래픽카드를 먼저 빼라';break;
+    case'cpu':if(S.inst.cooler)return'쿨러가 CPU를 덮고 있어요. 쿨러부터 빼 주세요';if(S.lever!=='open')return'소켓 레버를 올려야 CPU를 뺄 수 있어요';break;
+    case'ram1':case'ram2':if(S.latch[S.inst[id]]===0)return'래치가 닫혀서 램이 고정돼 있어요. 슬롯 아래 래치를 눌러 열어 주세요';break;
+    case'mobo':if(S.inst.gpu)return'그래픽카드가 케이스에 고정돼 있어요. 그래픽카드부터 빼 주세요';break;
   }
   return null;
 }
@@ -398,7 +398,7 @@ function startPart(a){
     if(id==='gpu'){detachIf(['gpupwr','hdmiGpu']);}
     if(id==='mobo'){detachIf(['hdmiMobo']);}
     if(id==='psu'){detachIf(['acin']);}
-    if(id==='cooler'&&S.conn.c_cpufan){detachIf([S.conn.c_cpufan]);toast('쿨러 팬 케이블을 먼저 뽑고 쿨러를 뗐다');}
+    if(id==='cooler'&&S.conn.c_cpufan){detachIf([S.conn.c_cpufan]);toast('쿨러 팬 케이블을 먼저 뽑고 쿨러를 뗐어요');}
     held.off={x:Math.min(a.off.x,PD[id].w-10),y:Math.min(a.off.y,PD[id].h-10)};
   }
   S.order=S.order.filter(x=>x!==id);S.order.push(id);
@@ -406,10 +406,10 @@ function startPart(a){
 }
 function detachIf(ids){for(const c of CIDS)if(ids.includes(S.conn[c])){const e=endPos(c);const an=anchorPos(c);S.conn[c]=null;S.cend[c]={x:e.x-an.x+20,y:e.y-an.y+30};}}
 function startConn(a){
-  if(run&&a.id!=='c_ac'){toast('전원이 켜져 있다. 전원을 끈 뒤 작업하라','bad');act=null;return false;}
+  if(run&&a.id!=='c_ac'){toast('전원이 켜져 있어요. 먼저 전원을 꺼 주세요','bad');act=null;return false;}
   held={k:'conn',id:a.id,p:a.p0,prevConn:S.conn[a.id]};
   if(S.conn[a.id]){S.conn[a.id]=null;}
-  if(a.id==='c_ac'&&run){run=null;toast('전원 케이블을 뽑아 전원이 꺼졌다');}
+  if(a.id==='c_ac'&&run){run=null;toast('전원 케이블을 뽑아서 전원이 꺼졌어요');}
   return true;
 }
 function slotAt(id,p){
@@ -427,11 +427,11 @@ function dropPart(){
     S.loose.paste={...h.prevLoose};
     const sk=slots().find(s=>s.id==='socket');
     if(inR(p,sk,30)){
-      if(!S.inst.cpu)toast('CPU가 소켓에 없다. CPU를 먼저 장착하라','bad');
-      else if(S.inst.cooler)toast('쿨러가 CPU를 덮고 있다. 쿨러를 빼고 발라라','bad');
-      else if(S.paste)toast('이미 써멀 그리스가 발라져 있다. 너무 많이 바르면 넘쳐 흐른다');
-      else{S.paste=true;toast('CPU 가운데에 써멀 그리스를 콩알만큼 짰다','good');}
-    }else toast('써멀 그리스는 소켓에 장착된 CPU 위로 끌어다 놓는다');
+      if(!S.inst.cpu)toast('소켓에 CPU가 없어요. CPU부터 장착해 주세요','bad');
+      else if(S.inst.cooler)toast('쿨러가 CPU를 덮고 있어요. 쿨러를 빼고 발라 주세요','bad');
+      else if(S.paste)toast('이미 써멀 그리스를 발랐어요. 너무 많이 바르면 옆으로 넘쳐요');
+      else{S.paste=true;toast('CPU 가운데에 써멀 그리스를 콩알만큼 짰어요','good');}
+    }else toast('써멀 그리스는 소켓에 꽂힌 CPU 위로 끌어다 놓으세요');
     changed();return;
   }
   const s=slotAt(id,p);
@@ -439,8 +439,8 @@ function dropPart(){
     const msg=canInstall(id,s);
     if(!msg){
       S.inst[id]=s.id;
-      if(s.acc==='ram'){S.latch[s.id]=0;toast(`${s.id} 슬롯에 램이 '딸깍' 하고 고정됐다`,'good');}
-      else toast(INSTMSG[id]||'장착했다','good');
+      if(s.acc==='ram'){S.latch[s.id]=0;toast(`${s.id} 슬롯에 램이 '딸깍' 하고 고정됐어요`,'good');}
+      else toast(INSTMSG[id]||'장착했어요','good');
       changed();return;
     }
     toast(msg,'bad',4200);
@@ -451,80 +451,80 @@ function dropPart(){
   x=Math.max(-MO.x-r.w*.5,Math.min(WW-MO.x-r.w*.5,x));y=Math.max(-MO.y-r.h*.5,Math.min(WH-MO.y-r.h*.5,y));
   S.loose[id]={x,y};changed();
 }
-const INSTMSG={cpu:'CPU를 소켓에 살며시 내려놓았다. 이제 레버를 내려 고정하라',cooler:'쿨러를 CPU 위에 고정했다',m2:'M.2 SSD를 비스듬히 꽂고 나사로 고정했다',gpu:'그래픽카드를 PCIe x16 슬롯에 꽂았다(슬롯 끝 걸쇠가 딸깍 잠김)',mobo:'메인보드를 케이스 스탠드오프 위에 놓고 나사 9개로 고정했다',psu:'파워를 케이스 아래 칸에 넣고 뒤판 나사로 고정했다',panel:'측면 패널을 닫고 나사를 조였다'};
+const INSTMSG={cpu:'CPU를 소켓에 살며시 내려놓았어요. 이제 레버를 내려서 고정해 주세요',cooler:'쿨러를 CPU 위에 고정했어요',m2:'M.2 SSD를 비스듬히 꽂고 나사로 고정했어요',gpu:'그래픽카드를 PCIe x16 슬롯에 꽂았어요(슬롯 끝 걸쇠가 딸깍 잠겨요)',mobo:'메인보드를 케이스 스탠드오프 위에 올리고 나사 9개로 고정했어요',psu:'파워를 케이스 아래 칸에 넣고 뒤판 나사로 고정했어요',panel:'측면 패널을 닫고 나사를 조였어요'};
 function hdrAt(p){let best=null,bd=1e9;for(const h of headers()){if(inR(p,h,14)){const d=Math.hypot(p.x-(h.x+h.w/2),p.y-(h.y+h.h/2));if(d<bd){bd=d;best=h;}}}return best;}
 function dropConn(){
   const h=held;held=null;const c=h.id,p=h.p,d=CD[c];
   const hd=hdrAt(p);
   if(hd&&!(panelBlocks(p)&&!['hdmi','ac'].includes(hd.t))){
     if(hd.t!==d.t){
-      if(d.t==='eps8'&&hd.t==='pcie8'||d.t==='pcie8'&&hd.t==='eps8')toast('CPU용 8핀(EPS)과 그래픽카드용 8핀(PCIe)은 키 모양이 달라 들어가지 않는다. 커넥터에 적힌 글자(CPU / PCIe)를 확인하라','bad',5000);
-      else if(d.t==='sata')toast('SATA 전원은 SATA 저장장치용이다. 이번 조립에는 쓰지 않으니 그대로 둔다','bad');
-      else toast(`${d.nm}는 ${hd.nm}에 맞지 않는다`,'bad');
+      if(d.t==='eps8'&&hd.t==='pcie8'||d.t==='pcie8'&&hd.t==='eps8')toast('CPU용 8핀(EPS)과 그래픽카드용 8핀(PCIe)은 모양이 달라서 안 들어가요. 커넥터에 적힌 글자(CPU / PCIe)를 확인해 주세요','bad',5000);
+      else if(d.t==='sata')toast('SATA 전원은 SATA 저장장치용이에요. 이번 조립에서는 안 쓰니 그냥 두세요','bad');
+      else toast(`${d.nm}는 ${hd.nm}에 안 맞아요`,'bad');
     }else{
       const occ=CIDS.find(x=>x!==c&&S.conn[x]===hd.id);
-      if(occ)toast(`${hd.nm}에는 이미 ${CD[occ].nm}가 꽂혀 있다`,'bad');
+      if(occ)toast(`${hd.nm}에는 이미 ${CD[occ].nm}가 꽂혀 있어요`,'bad');
       else{S.conn[c]=hd.id;toast(CONNMSG(c,hd),'good');changed();return;}
     }
   }
   const an=anchorPos(c);S.cend[c]={x:p.x-an.x,y:p.y-an.y};changed();
 }
 function CONNMSG(c,hd){
-  if(c==='c_ac'){return'전원 케이블을 파워 뒤쪽에 꽂았다';}
-  if(CD[c].t==='fp2')return`${CD[c].lab}를 ${hd.nm.replace('F_PANEL ','')}에 꽂았다`;
-  return`${CD[c].nm}를 ${hd.nm}에 꽂았다`;
+  if(c==='c_ac'){return'전원 케이블을 파워 뒤쪽에 꽂았어요';}
+  if(CD[c].t==='fp2')return`${CD[c].lab}를 ${hd.nm.replace('F_PANEL ','')}에 꽂았어요`;
+  return`${CD[c].nm}를 ${hd.nm}에 꽂았어요`;
 }
 function tapPart(id){
-  if(run){toast('전원이 켜져 있다');return;}
+  if(run){toast('전원이 켜져 있어요');return;}
   const r=partRect(id);
-  if(id==='cpu'&&!r.inst){S.rot.cpu=(S.rot.cpu+1)%4;changed();toast('CPU를 90° 돌렸다. 금색 삼각형이 왼쪽 위에 오게 맞춘다');return;}
-  if((id==='ram1'||id==='ram2')&&!r.inst){S.rot[id]^=1;changed();toast('램을 180° 돌렸다. 홈(노치) 위치를 확인하라');return;}
-  toast(`${PD[id].nm} — 끌어서 옮긴다`+(r.inst?' (장착된 부품은 끌면 분리된다)':''));
+  if(id==='cpu'&&!r.inst){S.rot.cpu=(S.rot.cpu+1)%4;changed();toast('CPU를 90° 돌렸어요. 금색 삼각형이 왼쪽 위로 오게 맞춰 주세요');return;}
+  if((id==='ram1'||id==='ram2')&&!r.inst){S.rot[id]^=1;changed();toast('램을 180° 돌렸어요. 홈(노치) 위치를 확인해 보세요');return;}
+  toast(`${PD[id].nm} — 끌어서 옮길 수 있어요`+(r.inst?' (장착된 부품은 끌면 빠져요)':''));
 }
 function tapConn(c){
-  if(CD[c].pol){if(run){toast('전원이 켜져 있다');return;}S.rot[c]^=1;changed();toast(`${CD[c].lab} 커넥터를 뒤집었다(+/− 방향이 바뀜)`);return;}
-  toast(CD[c].nm+(S.conn[c]?' — 끌어서 뽑는다':' — 끌어서 알맞은 곳에 꽂는다'));
+  if(CD[c].pol){if(run){toast('전원이 켜져 있어요');return;}S.rot[c]^=1;changed();toast(`${CD[c].lab} 커넥터를 뒤집었어요(+/− 방향이 바뀌어요)`);return;}
+  toast(CD[c].nm+(S.conn[c]?' — 끌어서 뽑을 수 있어요':' — 끌어서 맞는 곳에 꽂아 주세요'));
 }
 function tapInter(id){
   if(id==='pwrbtn'||id==='rstbtn'){pressButton(id);return;}
-  if(id==='psusw'){if(!S.inst.psu){toast('파워가 아직 케이스에 없다');return;}S.psuSw^=1;changed();toast(S.psuSw?'파워 스위치를 I(켜짐)로 올렸다':'파워 스위치를 O(꺼짐)로 내렸다');if(!S.psuSw&&run){run=null;toast('파워 스위치를 꺼서 컴퓨터가 꺼졌다');}return;}
-  if(run){toast('전원이 켜져 있다. 전원을 끈 뒤 작업하라','bad');return;}
-  if(id.startsWith('cover')){const i=+id.slice(5);S.covers[i]=0;changed();toast(`확장 슬롯 덮개 ${i+1}번을 떼어 냈다`,'good');return;}
-  if(id==='lever'){S.lever=S.lever==='open'?'closed':'open';changed();toast(S.lever==='open'?'소켓 레버를 올렸다':S.inst.cpu?'소켓 레버를 내려 CPU를 고정했다(꽤 뻑뻑한 게 정상)':'소켓 레버를 내렸다');return;}
-  if(id.startsWith('latch')){const s=id.slice(5);S.latch[s]^=1;changed();toast(`${s} 슬롯 래치를 ${S.latch[s]?'열었다':'닫았다'}`);return;}
+  if(id==='psusw'){if(!S.inst.psu){toast('파워가 아직 케이스에 없어요');return;}S.psuSw^=1;changed();toast(S.psuSw?'파워 스위치를 I(켜짐)로 올렸어요':'파워 스위치를 O(꺼짐)로 내렸어요');if(!S.psuSw&&run){run=null;toast('파워 스위치를 내려서 컴퓨터가 꺼졌어요');}return;}
+  if(run){toast('전원이 켜져 있어요. 먼저 전원을 꺼 주세요','bad');return;}
+  if(id.startsWith('cover')){const i=+id.slice(5);S.covers[i]=0;changed();toast(`확장 슬롯 덮개 ${i+1}번을 떼어 냈어요`,'good');return;}
+  if(id==='lever'){S.lever=S.lever==='open'?'closed':'open';changed();toast(S.lever==='open'?'소켓 레버를 올렸어요':S.inst.cpu?'소켓 레버를 내려서 CPU를 고정했어요(꽤 뻑뻑한 게 정상이에요)':'소켓 레버를 내렸어요');return;}
+  if(id.startsWith('latch')){const s=id.slice(5);S.latch[s]^=1;changed();toast(`${s} 슬롯 래치를 ${S.latch[s]?'열었어요':'닫았어요'}`);return;}
 }
 
 /* ================= 부팅 판정 ================= */
 function diagnose(){
-  if(S.conn.c_atx24!=='atx24')return{dead:true,msg:'메인보드 24핀 전원이 꽂혀 있지 않아 아무 반응이 없다.'};
+  if(S.conn.c_atx24!=='atx24')return{dead:true,msg:'메인보드 24핀 전원이 안 꽂혀 있어서 아무 반응이 없어요.'};
   const r={};
-  if(S.conn.c_eps8!=='eps')return{led:'CPU',msg:'팬은 돌지만 CPU 디버그 LED가 켜진 채 멈췄다. CPU 보조전원(8핀 EPS)이 빠져 있으면 CPU에 전원이 가지 않는다.'};
-  if(!S.inst.cpu||S.lever!=='closed')return{led:'CPU',msg:'CPU 디버그 LED에서 멈췄다. CPU가 없거나 소켓 레버가 고정되지 않았다.'};
-  if(!S.inst.ram1&&!S.inst.ram2)return{led:'DRAM',msg:'DRAM 디버그 LED에서 멈췄다. 램이 없으면 부팅할 수 없다.'};
-  if(!S.inst.gpu)return{led:'VGA',msg:'VGA 디버그 LED에서 멈췄다. 이 CPU(Core i5-13400F)는 내장 그래픽이 없어 그래픽카드가 꼭 필요하다.'};
-  if(S.conn.c_pcie8!=='gpupwr')return{led:'VGA',msg:'VGA 디버그 LED에서 멈췄다. 그래픽카드 보조전원(PCIe 8핀)이 꽂혀 있지 않다.'};
-  if(!S.inst.cooler)return{overheat:3.6,msg:'쿨러가 없어 CPU 온도가 순식간에 100 °C를 넘었고, CPU가 스스로를 보호하려고 전원을 껐다.'};
-  if(S.conn.c_cpufan!=='cpufan')return{fanerr:true,msg:S.conn.c_cpufan?'쿨러 팬이 CPU_FAN이 아닌 다른 팬 단자에 꽂혀 있어 BIOS가 "CPU Fan Error"를 띄웠다.':'쿨러 팬 케이블이 꽂혀 있지 않아 BIOS가 "CPU Fan Error"를 띄웠다.'};
-  if(!S.inst.m2)return{led:'BOOT',noboot:true,msg:'BOOT 디버그 LED에서 멈추고 "부팅 장치를 찾을 수 없다"는 메시지가 떴다. 운영체제가 담긴 SSD가 없다.'};
-  if(!S.paste)return{os:true,overheat:10,msg:'윈도우까지 켜졌지만 써멀 그리스가 없어 열이 쿨러로 잘 전달되지 않았다. 온도가 계속 올라 과열로 꺼졌다.'};
-  return{os:true,ok:true,msg:'정상 부팅했다.'};
+  if(S.conn.c_eps8!=='eps')return{led:'CPU',msg:'팬은 도는데 CPU 디버그 LED가 켜진 채 멈췄어요. CPU 보조전원(8핀 EPS)이 빠지면 CPU에 전원이 안 들어가요.'};
+  if(!S.inst.cpu||S.lever!=='closed')return{led:'CPU',msg:'CPU 디버그 LED에서 멈췄어요. CPU가 없거나 소켓 레버가 고정되지 않았어요.'};
+  if(!S.inst.ram1&&!S.inst.ram2)return{led:'DRAM',msg:'DRAM 디버그 LED에서 멈췄어요. 램이 없으면 부팅이 안 돼요.'};
+  if(!S.inst.gpu)return{led:'VGA',msg:'VGA 디버그 LED에서 멈췄어요. 이 CPU(Core i5-13400F)는 내장 그래픽이 없어서 그래픽카드가 꼭 있어야 해요.'};
+  if(S.conn.c_pcie8!=='gpupwr')return{led:'VGA',msg:'VGA 디버그 LED에서 멈췄어요. 그래픽카드 보조전원(PCIe 8핀)이 안 꽂혀 있어요.'};
+  if(!S.inst.cooler)return{overheat:3.6,msg:'쿨러가 없어서 CPU 온도가 순식간에 100 °C를 넘었고, CPU가 스스로를 지키려고 전원을 껐어요.'};
+  if(S.conn.c_cpufan!=='cpufan')return{fanerr:true,msg:S.conn.c_cpufan?'쿨러 팬이 CPU_FAN이 아닌 다른 팬 단자에 꽂혀 있어서 BIOS가 "CPU Fan Error"를 띄웠어요.':'쿨러 팬 케이블이 안 꽂혀 있어서 BIOS가 "CPU Fan Error"를 띄웠어요.'};
+  if(!S.inst.m2)return{led:'BOOT',noboot:true,msg:'BOOT 디버그 LED에서 멈추고 "부팅 장치를 찾을 수 없음" 메시지가 떴어요. 운영체제가 든 SSD가 없어요.'};
+  if(!S.paste)return{os:true,overheat:10,msg:'윈도우까지는 켜졌는데, 써멀 그리스가 없어서 열이 쿨러로 잘 안 넘어갔어요. 온도가 계속 올라 과열로 꺼졌어요.'};
+  return{os:true,ok:true,msg:'정상적으로 부팅됐어요.'};
 }
 function pressButton(id){
   const c=id==='pwrbtn'?'c_pwrsw':'c_rstsw',at=S.conn[c];
   const nm=id==='pwrbtn'?'전원':'리셋';
-  if(!at){toast(`케이스 ${nm} 버튼을 눌렀지만 반응이 없다. 버튼 케이블이 메인보드에 꽂혀 있지 않다`,'bad');lastDiag={msg:`케이스 ${nm} 버튼 케이블(${CD[c].lab})이 F_PANEL에 꽂혀 있지 않다.`};return;}
+  if(!at){toast(`케이스 ${nm} 버튼을 눌렀는데 반응이 없어요. 버튼 케이블이 메인보드에 안 꽂혀 있어요`,'bad');lastDiag={msg:`케이스 ${nm} 버튼 케이블(${CD[c].lab})이 F_PANEL에 안 꽂혀 있어요.`};return;}
   const action=at==='fpPWR'?'power':at==='fpRST'?'reset':null;
-  if(!action){toast(`케이스 ${nm} 버튼을 눌렀지만 반응이 없다`,'bad');lastDiag={msg:`${CD[c].lab} 커넥터가 F_PANEL의 엉뚱한 자리(LED 자리)에 꽂혀 있다.`};return;}
+  if(!action){toast(`케이스 ${nm} 버튼을 눌렀는데 반응이 없어요`,'bad');lastDiag={msg:`${CD[c].lab} 커넥터가 F_PANEL의 엉뚱한 자리(LED 자리)에 꽂혀 있어요.`};return;}
   if(action==='reset'){
-    if(run){run.t0=performance.now();toast('컴퓨터가 다시 시작됐다');}
-    else{toast(`케이스 ${nm} 버튼을 눌렀지만 켜지지 않는다`,'bad');lastDiag={msg:id==='pwrbtn'?'전원 스위치 커넥터가 F_PANEL의 리셋 자리에 꽂혀 있다. 그래서 전원 버튼이 리셋 버튼처럼 동작한다.':'리셋 버튼은 켜진 컴퓨터를 다시 시작할 뿐 전원을 켜지 않는다.'};}
+    if(run){run.t0=performance.now();toast('컴퓨터가 다시 시작됐어요');}
+    else{toast(`케이스 ${nm} 버튼을 눌렀는데 켜지지 않아요`,'bad');lastDiag={msg:id==='pwrbtn'?'전원 스위치 커넥터가 F_PANEL의 리셋 자리에 꽂혀 있어요. 그래서 전원 버튼이 리셋 버튼처럼 동작해요.':'리셋 버튼은 켜져 있는 컴퓨터를 다시 시작할 뿐, 전원을 켜지는 않아요.'};}
     return;
   }
-  if(run){run=null;toast('전원 버튼을 눌러 컴퓨터를 껐다');return;}
-  if(S.conn.c_ac!=='acin'||!S.psuSw){toast('전원 버튼을 눌렀지만 아무 반응이 없다','bad');lastDiag={msg:S.conn.c_ac!=='acin'?'파워에 전원 케이블이 꽂혀 있지 않다.':'파워 뒤쪽 스위치가 O(꺼짐)에 있다.'};return;}
+  if(run){run=null;toast('전원 버튼을 눌러 컴퓨터를 껐어요');return;}
+  if(S.conn.c_ac!=='acin'||!S.psuSw){toast('전원 버튼을 눌렀는데 아무 반응이 없어요','bad');lastDiag={msg:S.conn.c_ac!=='acin'?'파워에 전원 케이블이 안 꽂혀 있어요.':'파워 뒤쪽 스위치가 O(꺼짐)에 있어요.'};return;}
   const d=diagnose();lastDiag=d;
-  if(d.dead){toast('전원 버튼을 눌렀지만 아무 반응이 없다','bad');return;}
-  run={t0:performance.now(),d};toast('전원이 들어왔다','good',1500);
+  if(d.dead){toast('전원 버튼을 눌렀는데 아무 반응이 없어요','bad');return;}
+  run={t0:performance.now(),d};toast('전원이 들어왔어요','good',1500);
 }
 function runPhase(){if(!run)return null;return(performance.now()-run.t0)/1000;}
 function ledState(){
@@ -546,38 +546,38 @@ function steps(){
   const ram2=[S.inst.ram1,S.inst.ram2].filter(Boolean);
   const L=[];
   const st=(id,title,done,text,why,tg)=>L.push({id,title,done,text,why,tg});
-  st('lever','CPU 소켓 레버 올리기',!!S.inst.cpu||S.lever==='open','메인보드 CPU 소켓 오른쪽에 있는 쇠 레버를 탭해 올린다.','레버를 올려야 소켓 덮개(로드 플레이트)가 열려 CPU를 넣을 수 있다.',['lever']);
-  st('cpu','CPU 장착',!!S.inst.cpu,'CPU를 끌어 소켓에 놓는다. CPU 모서리의 금색 삼각형이 소켓의 삼각형(왼쪽 위)과 같은 쪽에 와야 한다. 방향이 다르면 매트 위의 CPU를 탭해 90°씩 돌린다.','CPU는 한 방향으로만 들어간다. 억지로 누르면 소켓 핀이 휘어 메인보드가 고장 난다.',['cpu','socket']);
-  st('leverc','소켓 레버 내리기',!!S.inst.cpu&&S.lever==='closed','레버를 다시 탭해 내린다.','레버가 CPU를 눌러 고정해야 핀이 제대로 닿는다.',['lever']);
-  st('paste','써멀 그리스 바르기',S.paste,'써멀 그리스 튜브를 끌어 소켓의 CPU 위에 놓는다.','CPU와 쿨러 바닥 사이의 미세한 틈을 메워 열이 잘 전달되게 한다.',['paste','socket']);
-  st('cooler','CPU 쿨러 장착',!!S.inst.cooler&&S.paste,S.inst.cooler&&!S.paste?'써멀 그리스 없이 쿨러를 달았다. 쿨러를 끌어 떼어 낸 뒤 써멀을 바르고 다시 장착한다.':'CPU 쿨러를 끌어 CPU 위에 놓는다.','쿨러가 없으면 CPU는 몇 초 만에 100 °C를 넘는다.',['cooler','coolerSlot']);
-  st('cpufan','쿨러 팬 케이블 → CPU_FAN',S.conn.c_cpufan==='cpufan',S.conn.c_cpufan?'쿨러 팬 케이블이 다른 팬 단자에 꽂혀 있다. 소켓 위쪽의 CPU_FAN 단자로 옮긴다.':'쿨러에서 나온 작은 팬 케이블 끝을 끌어 소켓 위쪽의 CPU_FAN 단자에 꽂는다.','BIOS는 CPU_FAN 단자의 회전수를 감시한다. 없으면 "CPU Fan Error"로 부팅이 멈춘다.',['c_cpufan','cpufan']);
+  st('lever','CPU 소켓 레버 올리기',!!S.inst.cpu||S.lever==='open','메인보드 CPU 소켓 오른쪽에 있는 쇠 레버를 탭해서 올려 주세요.','레버를 올려야 소켓 덮개(로드 플레이트)가 열려서 CPU를 넣을 수 있어요.',['lever']);
+  st('cpu','CPU 장착',!!S.inst.cpu,'CPU를 끌어서 소켓에 놓아 주세요. CPU 모서리의 금색 삼각형이 소켓 왼쪽 위 삼각형과 같은 쪽에 와야 해요. 방향이 다르면 매트 위 CPU를 탭해서 90°씩 돌려 주세요.','CPU는 한 방향으로만 들어가요. 억지로 누르면 소켓 핀이 휘어서 메인보드가 망가져요.',['cpu','socket']);
+  st('leverc','소켓 레버 내리기',!!S.inst.cpu&&S.lever==='closed','레버를 다시 탭해서 내려 주세요.','레버가 CPU를 눌러 고정해야 핀이 제대로 닿아요.',['lever']);
+  st('paste','써멀 그리스 바르기',S.paste,'써멀 그리스 튜브를 끌어서 소켓의 CPU 위에 놓아 주세요.','CPU와 쿨러 바닥 사이의 미세한 틈을 메워서 열이 잘 전달되게 해 줘요.',['paste','socket']);
+  st('cooler','CPU 쿨러 장착',!!S.inst.cooler&&S.paste,S.inst.cooler&&!S.paste?'써멀 그리스 없이 쿨러를 달았어요. 쿨러를 끌어서 뗀 다음, 써멀을 바르고 다시 달아 주세요.':'CPU 쿨러를 끌어서 CPU 위에 놓아 주세요.','쿨러가 없으면 CPU는 몇 초 만에 100 °C를 넘어요.',['cooler','coolerSlot']);
+  st('cpufan','쿨러 팬 케이블 → CPU_FAN',S.conn.c_cpufan==='cpufan',S.conn.c_cpufan?'쿨러 팬 케이블이 다른 팬 단자에 꽂혀 있어요. 소켓 위쪽 CPU_FAN 단자로 옮겨 주세요.':'쿨러에서 나온 작은 팬 케이블 끝을 끌어서 소켓 위쪽 CPU_FAN 단자에 꽂아 주세요.','BIOS는 CPU_FAN 단자의 팬 회전수를 확인해요. 거기에 팬이 없으면 "CPU Fan Error"로 부팅이 멈춰요.',['c_cpufan','cpufan']);
   const badRam=ram2.some(s=>s==='A1'||s==='B1');
-  const ramTxt=ram2.length===2&&badRam?'램이 A1/B1에 꽂혀 있다. 2개일 때는 설명서 권장 슬롯인 A2와 B2(CPU에서 2번째·4번째)에 꽂아야 듀얼 채널이 제대로 동작한다. 래치를 열고 옮겨라.':
-    '램 슬롯 A2와 B2(CPU 쪽에서 2번째·4번째)의 아래쪽 래치를 탭해 연 뒤, 램을 끌어 슬롯에 놓는다. 램의 홈(노치)이 맞지 않으면 매트 위에서 탭해 180° 돌린다.';
-  st('ram','램 2개 장착 (A2·B2)',ram2.length===2&&!badRam,ramTxt,'램 2개를 서로 다른 채널(A·B)에 나눠 꽂아야 듀얼 채널로 대역폭이 두 배가 된다.',['ram1','ram2','A2','B2','latchA2','latchB2']);
-  st('m2','M.2 SSD 장착',!!S.inst.m2,'M.2 SSD를 끌어 메인보드 가운데의 M.2 슬롯에 놓는다.','운영체제(윈도우)가 들어 있는 저장장치다. 없으면 부팅할 곳이 없다.',['m2','m2slot']);
-  st('psu','파워 장착',!!S.inst.psu,'파워서플라이를 끌어 케이스 아래쪽 칸(파워 덮개 안)에 넣는다.','파워는 콘센트의 교류 220 V를 컴퓨터가 쓰는 직류 12 V·5 V·3.3 V로 바꾼다.',['psu','psubay']);
-  st('mobo','메인보드를 케이스에 장착',!!S.inst.mobo,'메인보드를 통째로 끌어 케이스 안의 스탠드오프(나사 기둥) 위에 놓는다. 후면 단자가 케이스 뒤쪽(왼쪽)으로 가야 한다.','스탠드오프가 메인보드를 케이스 철판에서 띄워 합선을 막는다.',['mobo','tray']);
-  st('covers','확장 슬롯 덮개 떼기',!S.covers[0]&&!S.covers[1]||!!S.inst.gpu,'케이스 뒤판에서 그래픽카드 높이에 있는 확장 슬롯 덮개 1·2번을 탭해 떼어 낸다.','그래픽카드는 2칸 두께라 덮개 2개를 떼야 출력 단자가 밖으로 나온다.',['cover0','cover1']);
-  st('gpu','그래픽카드 장착',!!S.inst.gpu,'그래픽카드를 끌어 메인보드의 가장 위 PCIe x16 슬롯에 놓는다.','CPU와 가장 가까운 x16 슬롯이 CPU에 직접 연결된 16배속 슬롯이다.',['gpu','pcie']);
-  st('atx24','메인보드 24핀 전원',S.conn.c_atx24==='atx24','파워에서 나온 가장 두꺼운 24핀 커넥터를 메인보드 오른쪽 가장자리의 24핀 단자에 꽂는다.','메인보드 전체에 전원을 공급하는 주 전원이다.',['c_atx24','atx24']);
-  st('eps','CPU 8핀 전원(EPS)',S.conn.c_eps8==='eps','"CPU"라고 적힌 8핀 커넥터를 메인보드 왼쪽 위의 CPU 8핀 단자에 꽂는다.','CPU는 전력을 많이 쓰므로 별도의 12 V 전원을 받는다.',['c_eps8','eps']);
-  st('pcie','그래픽카드 8핀 전원',S.conn.c_pcie8==='gpupwr','"PCIe"라고 적힌 8핀 커넥터를 그래픽카드 위쪽의 전원 단자에 꽂는다.','그래픽카드는 슬롯만으로는 75 W까지만 받을 수 있어 보조전원이 필요하다.',['c_pcie8','gpupwr']);
-  st('sysfan','후면 팬 → SYS_FAN1',S.conn.c_sysfan==='sysfan',S.conn.c_sysfan==='cpufan'?'후면 팬이 CPU_FAN에 꽂혀 있다. 메인보드 아래쪽의 SYS_FAN1로 옮긴다.':'케이스 뒤쪽 팬의 케이블을 메인보드 아래쪽 SYS_FAN1 단자에 꽂는다.','케이스 안의 뜨거운 공기를 밖으로 빼낸다.',['c_sysfan','sysfan']);
+  const ramTxt=ram2.length===2&&badRam?'램이 A1/B1에 꽂혀 있어요. 2개를 쓸 때는 설명서 권장 슬롯인 A2·B2(CPU에서 2번째·4번째)에 꽂아야 듀얼 채널이 제대로 동작해요. 래치를 열고 옮겨 주세요.':
+    '램 슬롯 A2·B2(CPU 쪽에서 2번째·4번째) 아래쪽 래치를 탭해서 연 다음, 램을 끌어 슬롯에 놓아 주세요. 램의 홈(노치)이 안 맞으면 매트 위에서 탭해 180° 돌리면 돼요.';
+  st('ram','램 2개 장착 (A2·B2)',ram2.length===2&&!badRam,ramTxt,'램 2개를 서로 다른 채널(A·B)에 나눠 꽂아야 듀얼 채널로 속도(대역폭)가 두 배가 돼요.',['ram1','ram2','A2','B2','latchA2','latchB2']);
+  st('m2','M.2 SSD 장착',!!S.inst.m2,'M.2 SSD를 끌어서 메인보드 가운데 M.2 슬롯에 놓아 주세요.','운영체제(윈도우)가 들어 있는 저장장치예요. 없으면 부팅할 곳이 없어요.',['m2','m2slot']);
+  st('psu','파워 장착',!!S.inst.psu,'파워서플라이를 끌어서 케이스 아래쪽 칸(파워 덮개 안)에 넣어 주세요.','파워는 콘센트의 교류 220 V를 컴퓨터가 쓰는 직류 12 V·5 V·3.3 V로 바꿔 줘요.',['psu','psubay']);
+  st('mobo','메인보드를 케이스에 장착',!!S.inst.mobo,'메인보드를 통째로 끌어서 케이스 안 스탠드오프(나사 기둥) 위에 놓아 주세요. 후면 단자가 케이스 뒤쪽(왼쪽)을 향해야 해요.','스탠드오프가 메인보드를 케이스 철판에서 띄워 줘서 합선을 막아요.',['mobo','tray']);
+  st('covers','확장 슬롯 덮개 떼기',!S.covers[0]&&!S.covers[1]||!!S.inst.gpu,'케이스 뒤판에서 그래픽카드 높이에 있는 확장 슬롯 덮개 1·2번을 탭해서 떼어 주세요.','그래픽카드는 2칸 두께라서 덮개 2개를 떼야 출력 단자가 밖으로 나와요.',['cover0','cover1']);
+  st('gpu','그래픽카드 장착',!!S.inst.gpu,'그래픽카드를 끌어서 메인보드 맨 위 PCIe x16 슬롯에 놓아 주세요.','CPU와 가장 가까운 x16 슬롯이 CPU에 직접 연결된 16배속 슬롯이에요.',['gpu','pcie']);
+  st('atx24','메인보드 24핀 전원',S.conn.c_atx24==='atx24','파워에서 나온 가장 두꺼운 24핀 커넥터를 메인보드 오른쪽 가장자리 24핀 단자에 꽂아 주세요.','메인보드 전체에 전기를 공급하는 주 전원이에요.',['c_atx24','atx24']);
+  st('eps','CPU 8핀 전원(EPS)',S.conn.c_eps8==='eps','"CPU"라고 적힌 8핀 커넥터를 메인보드 왼쪽 위 CPU 8핀 단자에 꽂아 주세요.','CPU는 전기를 많이 써서 12 V 전원을 따로 받아요.',['c_eps8','eps']);
+  st('pcie','그래픽카드 8핀 전원',S.conn.c_pcie8==='gpupwr','"PCIe"라고 적힌 8핀 커넥터를 그래픽카드 위쪽 전원 단자에 꽂아 주세요.','그래픽카드는 슬롯으로는 75 W까지만 받을 수 있어서 보조전원이 필요해요.',['c_pcie8','gpupwr']);
+  st('sysfan','후면 팬 → SYS_FAN1',S.conn.c_sysfan==='sysfan',S.conn.c_sysfan==='cpufan'?'후면 팬이 CPU_FAN에 꽂혀 있어요. 메인보드 아래쪽 SYS_FAN1로 옮겨 주세요.':'케이스 뒤쪽 팬 케이블을 메인보드 아래쪽 SYS_FAN1 단자에 꽂아 주세요.','케이스 안의 뜨거운 공기를 밖으로 빼 줘요.',['c_sysfan','sysfan']);
   const fpOk=S.conn.c_pwrsw==='fpPWR'&&S.conn.c_rstsw==='fpRST'&&S.conn.c_pled==='fpPLED'&&S.rot.c_pled===0&&S.conn.c_hdled==='fpHDLED'&&S.rot.c_hdled===0;
   const fpIssue=[];
-  if(S.conn.c_pwrsw&&S.conn.c_pwrsw!=='fpPWR')fpIssue.push('POWER SW가 엉뚱한 자리에 있다');
-  if(S.conn.c_rstsw&&S.conn.c_rstsw!=='fpRST')fpIssue.push('RESET SW가 엉뚱한 자리에 있다');
-  if(S.conn.c_pled&&(S.conn.c_pled!=='fpPLED'||S.rot.c_pled))fpIssue.push(S.conn.c_pled!=='fpPLED'?'POWER LED가 엉뚱한 자리에 있다':'POWER LED의 +/− 방향이 반대다(커넥터를 탭해 뒤집는다)');
-  if(S.conn.c_hdled&&(S.conn.c_hdled!=='fpHDLED'||S.rot.c_hdled))fpIssue.push(S.conn.c_hdled!=='fpHDLED'?'HDD LED가 엉뚱한 자리에 있다':'HDD LED의 +/− 방향이 반대다(커넥터를 탭해 뒤집는다)');
-  st('fp','전면 패널 커넥터 (F_PANEL)',fpOk,(fpIssue.length?'⚠ '+fpIssue.join(', ')+'.<br>':'')+'케이스 앞쪽에서 나온 작은 커넥터 4개(POWER SW, RESET SW, POWER LED, HDD LED)를 메인보드 오른쪽 아래 F_PANEL 핀에 꽂는다. LED는 +/− 방향이 있다. 커넥터의 + 표시가 핀의 +쪽에 오게 하고, 반대면 커넥터를 탭해 뒤집는다.<div class="pins">'+fpTxt+'</div>','스위치는 방향이 없지만 LED는 다이오드라 한쪽으로만 전류가 흐른다.',['c_pwrsw','c_rstsw','c_pled','c_hdled','fpPWR','fpRST','fpPLED','fpHDLED']);
-  st('usbaud','전면 USB 3.0·오디오',S.conn.c_usb3==='usb3'&&S.conn.c_audio==='audio','파란 USB 3.0 커넥터를 메인보드 오른쪽의 USB3 헤더에, 오디오 커넥터를 메인보드 왼쪽 아래의 HD_AUDIO에 꽂는다.','꽂지 않아도 부팅은 되지만 케이스 앞쪽 USB 단자와 이어폰 단자가 동작하지 않는다.',['c_usb3','c_audio','usb3','audio']);
-  st('panel','측면 패널 닫기',!!S.inst.panel,'매트 위의 측면 패널(강화유리)을 끌어 케이스 위에 놓는다.','먼지를 막고, 케이스 팬이 만든 공기 흐름이 제대로 생기게 한다.',['panel']);
-  st('hdmi','모니터 케이블 → 그래픽카드',S.conn.c_hdmi==='hdmiGpu',S.conn.c_hdmi==='hdmiMobo'?'모니터 케이블이 메인보드 HDMI에 꽂혀 있다. 그래픽카드가 있으면(그리고 내장 그래픽이 없는 F 모델이면) 그래픽카드 쪽 단자에 꽂아야 화면이 나온다.':'모니터에서 나온 HDMI 케이블 끝을 케이스 뒤쪽의 그래픽카드 HDMI 단자에 꽂는다.','화면 신호는 그래픽카드가 만든다.',['c_hdmi','hdmiGpu']);
-  st('ac','전원 케이블 꽂기',S.conn.c_ac==='acin','콘센트에서 나온 전원 케이블 끝을 케이스 뒤쪽 아래의 파워 전원 입력 단자에 꽂는다.','모든 작업이 끝난 뒤 마지막에 꽂는 것이 안전하다.',['c_ac','acin']);
-  st('psusw','파워 스위치 켜기',!!S.psuSw,'파워 뒤쪽의 스위치를 탭해 I(켜짐)로 바꾼다.','이 스위치가 O이면 전원 버튼을 눌러도 켜지지 않는다.',['psusw']);
-  st('power','전원 버튼 누르기',!!(run&&run.d.ok),'케이스 앞쪽 위의 둥근 전원 버튼을 누른다. 디버그 LED와 모니터 화면을 확인한다.','',['pwrbtn']);
+  if(S.conn.c_pwrsw&&S.conn.c_pwrsw!=='fpPWR')fpIssue.push('POWER SW가 엉뚱한 자리에 꽂혀 있어요');
+  if(S.conn.c_rstsw&&S.conn.c_rstsw!=='fpRST')fpIssue.push('RESET SW가 엉뚱한 자리에 꽂혀 있어요');
+  if(S.conn.c_pled&&(S.conn.c_pled!=='fpPLED'||S.rot.c_pled))fpIssue.push(S.conn.c_pled!=='fpPLED'?'POWER LED가 엉뚱한 자리에 꽂혀 있어요':'POWER LED의 +/− 방향이 반대예요(커넥터를 탭하면 뒤집혀요)');
+  if(S.conn.c_hdled&&(S.conn.c_hdled!=='fpHDLED'||S.rot.c_hdled))fpIssue.push(S.conn.c_hdled!=='fpHDLED'?'HDD LED가 엉뚱한 자리에 꽂혀 있어요':'HDD LED의 +/− 방향이 반대예요(커넥터를 탭하면 뒤집혀요)');
+  st('fp','전면 패널 커넥터 (F_PANEL)',fpOk,(fpIssue.length?'⚠ '+fpIssue.join(', ')+'.<br>':'')+'케이스 앞쪽에서 나온 작은 커넥터 4개(POWER SW, RESET SW, POWER LED, HDD LED)를 메인보드 오른쪽 아래 F_PANEL 핀에 꽂아 주세요. LED는 +/− 방향이 있어요. 커넥터의 + 표시가 핀의 +쪽에 오게 하고, 반대면 커넥터를 탭해서 뒤집으면 돼요.<div class="pins">'+fpTxt+'</div>','스위치는 방향이 상관없지만, LED는 다이오드라서 한쪽으로만 전류가 흘러요.',['c_pwrsw','c_rstsw','c_pled','c_hdled','fpPWR','fpRST','fpPLED','fpHDLED']);
+  st('usbaud','전면 USB 3.0·오디오',S.conn.c_usb3==='usb3'&&S.conn.c_audio==='audio','파란 USB 3.0 커넥터는 메인보드 오른쪽 USB3 헤더에, 오디오 커넥터는 메인보드 왼쪽 아래 HD_AUDIO에 꽂아 주세요.','안 꽂아도 부팅은 되지만, 케이스 앞쪽 USB 단자와 이어폰 단자가 동작하지 않아요.',['c_usb3','c_audio','usb3','audio']);
+  st('panel','측면 패널 닫기',!!S.inst.panel,'매트 위 측면 패널(강화유리)을 끌어서 케이스 위에 놓아 주세요.','먼지를 막고, 케이스 팬이 만드는 공기 흐름이 제대로 생기게 해 줘요.',['panel']);
+  st('hdmi','모니터 케이블 → 그래픽카드',S.conn.c_hdmi==='hdmiGpu',S.conn.c_hdmi==='hdmiMobo'?'모니터 케이블이 메인보드 HDMI에 꽂혀 있어요. 그래픽카드를 쓰면(특히 내장 그래픽이 없는 F 모델이면) 그래픽카드 쪽 단자에 꽂아야 화면이 나와요.':'모니터에서 나온 HDMI 케이블 끝을 케이스 뒤쪽 그래픽카드 HDMI 단자에 꽂아 주세요.','화면 신호는 그래픽카드가 만들어요.',['c_hdmi','hdmiGpu']);
+  st('ac','전원 케이블 꽂기',S.conn.c_ac==='acin','콘센트에서 나온 전원 케이블 끝을 케이스 뒤쪽 아래 파워 전원 단자에 꽂아 주세요.','작업을 다 끝낸 뒤 마지막에 꽂는 게 안전해요.',['c_ac','acin']);
+  st('psusw','파워 스위치 켜기',!!S.psuSw,'파워 뒤쪽 스위치를 탭해서 I(켜짐)로 바꿔 주세요.','이 스위치가 O면 전원 버튼을 눌러도 안 켜져요.',['psusw']);
+  st('power','전원 버튼 누르기',!!(run&&run.d.ok),'케이스 앞쪽 위 둥근 전원 버튼을 눌러 보세요. 디버그 LED와 모니터 화면을 확인해 보세요.','',['pwrbtn']);
   return L;
 }
 let hl=null;
@@ -586,17 +586,17 @@ function showHint(){
   let h='';
   const doneN=L.filter(s=>s.done).length;
   if(run&&!run.d.ok&&lastDiag&&!(run.d.overheat&&runPhase()<run.d.overheat)){
-    h+=`<h3>부팅 결과</h3><h2>문제가 있다</h2><p>${lastDiag.msg}</p><p class="why">전원 버튼을 다시 눌러 끄고, 아래 단계를 고친 뒤 다시 켠다.</p>`;
+    h+=`<h3>부팅 결과</h3><h2>문제가 있어요</h2><p>${lastDiag.msg}</p><p class="why">전원 버튼을 다시 눌러 끄고, 아래 단계를 고친 다음 다시 켜 보세요.</p>`;
   }else if(!run&&lastDiag&&!lastDiag.ok){
     h+=`<h3>마지막으로 켜 본 결과</h3><p>${lastDiag.msg}</p>`;
   }
   if(i<0){
-    h+=`<h3>${L.length}/${L.length} 완료</h3><h2>조립 완료!</h2><p>모든 단계를 마쳤다. 컴퓨터가 정상적으로 부팅했다.</p>`;
+    h+=`<h3>${L.length}/${L.length} 완료</h3><h2>조립 완료!</h2><p>모든 단계를 마쳤어요. 컴퓨터가 정상적으로 부팅됐어요.</p>`;
   }else{
     const s=L[i];
     h+=`<h3>다음 할 일 · ${doneN}/${L.length} 완료</h3><h2>${i+1}. ${s.title}</h2><p>${s.text}</p>${s.why?`<p class="why">${s.why}</p>`:''}`;
-    if(S.inst.panel&&!['panel','hdmi','ac','psusw','power'].includes(s.id))h+='<p class="why">⚠ 측면 패널이 닫혀 있다. 패널을 끌어 떼어 내야 안쪽 작업을 할 수 있다.</p>';
-    if(run&&!['power'].includes(s.id))h+='<p class="why">⚠ 전원이 켜져 있다. 전원 버튼을 눌러 끈 뒤 작업한다.</p>';
+    if(S.inst.panel&&!['panel','hdmi','ac','psusw','power'].includes(s.id))h+='<p class="why">⚠ 측면 패널이 닫혀 있어요. 패널을 끌어서 떼어야 안쪽 작업을 할 수 있어요.</p>';
+    if(run&&!['power'].includes(s.id))h+='<p class="why">⚠ 전원이 켜져 있어요. 전원 버튼을 눌러 끈 다음 작업해 주세요.</p>';
   }
   h+=`<div class="bt">${i>=0?'<button class="pri" id="pcShow">화면에서 위치 보기</button>':''}<button id="pcHClose">닫기</button></div>`;
   h+='<ol>'+L.map((s,k)=>`<li class="${s.done?'done':k===i?'cur':''}">${s.done?'✓ ':''}${s.title}</li>`).join('')+'</ol>';
@@ -653,7 +653,7 @@ function drawCaseBack(){
   ctx.fillStyle='#14181d';rr(x+60,y+40,760,1060,8);ctx.fill();
   // 스탠드오프
   ctx.fillStyle='#b9a36a';for(const[a,b]of[[12,12],[195,12],[378,12],[12,250],[195,250],[378,250],[12,476],[195,476],[378,476]]){ctx.beginPath();ctx.arc(x+70+a,y+80+b,5,0,7);ctx.fill();}
-  txt('케이스 (옆으로 눕혀 놓음)',x+440,y+20,13,'#6e7d91','center',700);
+  txt('케이스 (옆으로 눕혀 둔 상태)',x+440,y+20,13,'#6e7d91','center',700);
   txt('뒤쪽',x+40,y+20,12,'#6e7d91','center');txt('앞쪽',x+840,y+20,12,'#6e7d91','center');
   // 뒤판
   ctx.fillStyle='#2a3038';ctx.fillRect(x+20,y+40,40,1060);
@@ -817,7 +817,7 @@ function drawPanel(r,inst){
   if(inst){ctx.fillStyle='rgba(120,150,180,.13)';rr(r.x,r.y,r.w,r.h,18);ctx.fill();ctx.strokeStyle='rgba(200,220,240,.35)';ctx.lineWidth=4;ctx.stroke();
     ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=30;ctx.beginPath();ctx.moveTo(r.x+120,r.y+r.h);ctx.lineTo(r.x+520,r.y);ctx.stroke();
     ctx.fillStyle='#8d949e';for(const[a,b]of[[30,30],[r.w-30,30],[30,r.h-30],[r.w-30,r.h-30]]){ctx.beginPath();ctx.arc(r.x+a,r.y+b,9,0,7);ctx.fill();}
-    txt('측면 패널(강화유리) — 끌면 뗀다',r.x+r.w/2,r.y+r.h-50,13,'rgba(220,235,250,.5)','center',700);return;}
+    txt('측면 패널(강화유리) — 끌면 떼어져요',r.x+r.w/2,r.y+r.h-50,13,'rgba(220,235,250,.5)','center',700);return;}
   ctx.fillStyle='rgba(120,150,180,.18)';rr(r.x,r.y,r.w,r.h,10);ctx.fill();ctx.strokeStyle='rgba(200,220,240,.45)';ctx.lineWidth=3;ctx.stroke();
   ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(r.x+40,r.y+r.h);ctx.lineTo(r.x+200,r.y);ctx.stroke();
   txt('측면 패널',r.x+r.w/2,r.y+r.h/2-10,15,'rgba(230,240,250,.75)','center',800);txt('(강화유리)',r.x+r.w/2,r.y+r.h/2+12,11,'rgba(230,240,250,.6)','center',600);
@@ -856,7 +856,7 @@ function drawScreen(x,y,w,h){
   if(t<6){const a=(t*6)%(Math.PI*2);ctx.strokeStyle='#4ea8ff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+w/2,y+h/2+20,12,a,a+4);ctx.stroke();txt('Windows 시작 중',x+w/2,y+h/2-14,13,'#fff','center',700);return;}
   const g=ctx.createLinearGradient(x,y,x+w,y+h);g.addColorStop(0,'#0f4c81');g.addColorStop(1,'#3a7bd5');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);
   ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(x,y+h-18,w,18);
-  if(d.ok){txt('조립 완료!',x+w/2,y+h/2-14,22,'#fff','center',900);txt('정상적으로 부팅했다',x+w/2,y+h/2+14,12,'#e6f0ff','center',600);}
+  if(d.ok){txt('조립 완료!',x+w/2,y+h/2-14,22,'#fff','center',900);txt('정상적으로 부팅됐어요',x+w/2,y+h/2+14,12,'#e6f0ff','center',600);}
   else txt(`CPU 온도 ${Math.min(100,55+(t-6)*12).toFixed(0)} °C`,x+w/2,y+h/2,16,t>8?'#ff6b6b':'#fff','center',800);
 }
 function cableOf(c){
@@ -921,7 +921,7 @@ function draw(){
   // 힌트 강조
   if(hl){const t=(performance.now()-hl.t0)/1000;if(t>6)hl=null;else{const a=.5+.5*Math.sin(t*6);for(const id of hl.ids){const r=rectOf(id);if(!r)continue;ctx.strokeStyle=`rgba(255,194,71,${.4+.6*a})`;ctx.lineWidth=4/cam.s+2;rr(r.x-8,r.y-8,r.w+16,r.h+16,8);ctx.stroke();}}}
   // 과열 종료
-  if(run&&run.d.overheat&&runPhase()>run.d.overheat){run=null;toast('CPU 과열로 전원이 꺼졌다. ? 버튼에서 원인을 확인하라','bad',5000);}
+  if(run&&run.d.overheat&&runPhase()>run.d.overheat){run=null;toast('CPU 과열로 전원이 꺼졌어요. ? 버튼에서 원인을 확인해 보세요','bad',5000);}
 }
 function loop(){if(!open)return;draw();requestAnimationFrame(loop);}
 
@@ -930,7 +930,7 @@ function openPC(){
   if(!root){build();loadLocal();}
   open=true;root.classList.add('show');resize();fit();setCloud(cloudState);loadCloud();
   if(location.hash!=='#pc')try{history.replaceState(null,'','#pc');}catch(e){}
-  if(!S.savedAt)setTimeout(()=>toast('왼쪽 위 ? 단추를 누르면 다음에 할 일을 알려 준다',null,5000),400);
+  if(!S.savedAt)setTimeout(()=>toast('왼쪽 위 ? 버튼을 누르면 다음에 할 일을 알려 줘요',null,5000),400);
   requestAnimationFrame(loop);
 }
 function close(){open=false;if(root)root.classList.remove('show');if(location.hash==='#pc')try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}

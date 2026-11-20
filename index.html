@@ -137,14 +137,14 @@ input[type=range]{width:100%;margin:8px 0 2px;accent-color:#3fb6ff}
 <div class="ov" id="menu"><div class="sheet">
   <h3>계정</h3>
   <button class="btn pri acctbtn" id="bacct">계정·클라우드 저장<small id="acctst">로그인 안 됨</small></button>
-  <button class="btn pri acctbtn" id="bpc2" style="margin-top:6px">PC 조립 모드<small>컴퓨터를 직접 조립해 본다</small></button>
+  <button class="btn pri acctbtn" id="bpc2" style="margin-top:6px">PC 조립 모드<small>컴퓨터를 직접 조립해 봐요</small></button>
   <h3>예제 회로</h3>
   <div class="g2" id="exlist"></div>
   <h3>시뮬레이션</h3>
   <div class="row" style="margin-top:4px"><span>속도 배율</span><select id="speed"><option value="0.001">0.001×</option><option value="0.01">0.01×</option><option value="0.1">0.1×</option><option value="1" selected>1×</option><option value="10">10×</option></select></div>
-  <div class="note">60 Hz 교류의 파형을 눈으로 보려면 0.01× 이하가 알맞다.</div>
+  <div class="note">60 Hz 교류 파형을 눈으로 보려면 0.01× 이하가 좋아요.</div>
   <div class="btns"><button class="btn" id="breset">시간·상태 초기화</button></div>
-  <div class="note">초기화하면 t = 0이 되고, 축전기 전하·코일과 변압기 전류가 0이 되며, 끊어진 퓨즈가 복구된다.</div>
+  <div class="note">초기화하면 t = 0이 되고, 축전기 전하와 코일·변압기 전류가 0이 되며, 끊어진 퓨즈도 복구돼요.</div>
   <h3>층</h3>
   <label class="chk"><input type="checkbox" id="oghost" checked>다른 층을 흐리게 함께 표시</label>
   <div class="btns"><button class="btn danger" id="bdellayer">현재 층 삭제</button></div>
@@ -167,15 +167,15 @@ input[type=range]{width:100%;margin:8px 0 2px;accent-color:#3fb6ff}
   <div style="display:flex;align-items:center"><h2>사용법과 계산 원리</h2><button class="hb" id="hclose" style="margin-left:auto;width:32px;height:32px" title="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width:16px;height:16px"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
   <h4>사용법</h4>
   <ul>
-    <li>아래 도구 막대에서 부품을 고르고, 격자점을 눌러 다른 격자점까지 끌면 그 사이에 부품이 놓인다. 짧게 누르면 오른쪽으로 2칸 길이로 놓인다. 접지와 층 연결은 한 점을 누르면 놓인다.</li>
-    <li>끝점이 같은 격자점에 있는 부품끼리만 연결된다. 도선 중간의 격자점에 다른 부품의 끝이 닿으면 도선이 자동으로 나뉘어 연결된다. 두 도선이 끝점이 아닌 곳에서 교차하면 연결되지 않는다.</li>
-    <li><b>선택</b> 도구: 부품을 누르면 값 편집 창이 열린다. 부품을 끌면 이동하고, 선택된 부품의 끝점(a, b)을 끌면 길이·방향이 바뀐다. 스위치는 누를 때마다 열리고 닫힌다.</li>
-    <li><b>변압기</b>: 끌어 놓은 선이 1차 코일(a → b)이 되고, 그 옆 2칸 떨어진 곳에 2차 코일(c → d)이 생긴다.</li>
-    <li><b>층</b>: 왼쪽 위의 층 단추로 편집할 층을 고르고, 더하기 단추로 층을 추가한다. 서로 다른 층의 같은 격자점은 연결되지 않으며, <b>층 연결</b> 부품을 놓아야 이어진다. 층 연결은 현재 층과 바로 위층(맨 위층이면 아래층)을 잇고, 편집 창에서 이을 층을 바꿀 수 있다. 접지 기호는 층과 관계없이 모두 같은 노드이다.</li>
-    <li><b>3D</b> 단추: 모든 층을 쌓아 입체로 본다. 빈 곳을 한 손가락으로 끌면 회전하고(잡은 곳이 손을 따라 움직인다), 두 손가락이나 휠로 확대·이동한다. 3D에서도 2D와 똑같이 부품을 놓고 옮기고 편집할 수 있으며, 편집은 파랗게 표시된 현재 층 위에서 한다. 층은 왼쪽 위 단추로 바꾼다.</li>
-    <li><b>계정·클라우드 저장</b>: 메뉴에서 로그인하면 회로를 이름을 붙여 계정에 저장하고, 다른 기기에서 불러올 수 있다. 카나미치·SEED 10K와 같은 계정이다.</li>
+    <li>아래 도구 막대에서 부품을 고르고, 격자점을 눌러 다른 격자점까지 끌면 그 사이에 부품이 놓여요. 짧게 누르면 오른쪽으로 2칸 길이로 놓이고, 접지와 층 연결은 한 점만 누르면 돼요.</li>
+    <li>끝점이 같은 격자점에 있는 부품끼리만 연결돼요. 도선 중간의 격자점에 다른 부품 끝이 닿으면 도선이 자동으로 나뉘어 연결되고, 두 도선이 끝점이 아닌 곳에서 교차하면 연결되지 않아요.</li>
+    <li><b>선택</b> 도구: 부품을 누르면 값 편집 창이 열려요. 부품을 끌면 옮겨지고, 선택된 부품의 끝점(a, b)을 끌면 길이와 방향이 바뀌어요. 스위치는 누를 때마다 열리고 닫혀요.</li>
+    <li><b>변압기</b>: 끌어 놓은 선이 1차 코일(a → b)이 되고, 그 옆 2칸 떨어진 곳에 2차 코일(c → d)이 생겨요.</li>
+    <li><b>층</b>: 왼쪽 위 층 단추로 편집할 층을 고르고, 더하기 단추로 층을 추가해요. 서로 다른 층의 같은 격자점은 연결되지 않고, <b>층 연결</b> 부품을 놓아야 이어져요. 층 연결은 현재 층과 바로 위층(맨 위층이면 아래층)을 잇고, 편집 창에서 이을 층을 바꿀 수 있어요. 접지 기호는 층과 상관없이 모두 같은 노드예요.</li>
+    <li><b>3D</b> 단추: 모든 층을 쌓아서 입체로 봐요. 빈 곳을 한 손가락으로 끌면 회전하고(잡은 곳이 손을 따라 움직여요), 두 손가락이나 휠로 확대·이동해요. 3D에서도 2D처럼 부품을 놓고 옮기고 편집할 수 있고, 편집은 파랗게 표시된 현재 층 위에서 해요. 층은 왼쪽 위 단추로 바꿔요.</li>
+    <li><b>계정·클라우드 저장</b>: 메뉴에서 로그인하면 회로에 이름을 붙여 계정에 저장하고, 다른 기기에서 불러올 수 있어요. 카나미치·SEED 10K와 같은 계정이에요.</li>
     <li>단축키: Space 재생/정지, Ctrl+Z 실행 취소, Delete 삭제, R 회전, F 방향 뒤집기, Esc 선택 해제.</li>
-    <li>회로는 이 브라우저에 자동 저장된다.</li>
+    <li>회로는 이 브라우저에 자동 저장돼요.</li>
   </ul>
   <h4>1. 노드 해석</h4>
   <p>도선·닫힌 스위치·층 연결로 이어진 점들을 하나의 노드로 묶고, 각 노드에서 키르히호프 전류 법칙 Σ<i>I</i><sub>out</sub> = 0을 세운다. <i>I</i><sub>out</sub>은 그 노드에서 각 소자로 빠져나가는 전류이다. 모든 소자의 전류를 노드 전위로 나타내면 연립일차방정식이 된다.</p>
@@ -498,7 +498,7 @@ const EX=[
  {nm:'2층 회로',d:[['battery',[2,7],[2,3],{v:6}],['wire',[2,3],[2,2]],['switch',[2,2],[5,2],{on:true}],['resistor',[5,2],[9,2],{v:220}],['via',[9,2],[9,2],{z:0,z2:1}],['wire',[2,7],[2,8]],['wire',[2,8],[9,8]],['via',[9,8],[9,8],{z:0,z2:1}],['ground',[2,8],[2,8]],['ammeter',[9,2],[12,2],{z:1}],['led',[12,2],[12,5],{z:1,c:'green'}],['wire',[12,5],[12,8],{z:1}],['wire',[12,8],[9,8],{z:1}]]},
  {nm:'빈 회로',d:[]}
 ];
-const EXNOTE=['','스위치를 눌러 전구 하나를 끄고 켜 보라.','왼쪽 스위치를 닫으면 충전, 열고 오른쪽 스위치를 닫으면 방전된다. τ = RC = 1 s','LED 방향을 뒤집으면 전류가 흐르지 않는다.','스위치를 닫으면 전류가 서서히 증가한다.','네 저항의 비가 맞으면 가운데 전류계가 0을 가리킨다. 아래 오른쪽 저항값을 바꿔 보라.','실효값 10 V, 60 Hz를 권선비 1 : 0.5로 낮춘다. 계기 값이 정착하는 데 몇 주기가 걸린다.','파형은 속도 0.01×에서 축전기를 선택해 그래프로 보라.','왼쪽은 자석이 2 Hz로 왕복해 기전력이 주기적으로 바뀌고, 오른쪽은 자속이 일정하게 줄어 일정한 기전력으로 전구가 켜진다. 그래프는 코일을 선택해 보라.','축전기가 6 V로 충전된 뒤, 왼쪽 스위치를 열고 오른쪽 스위치를 닫으면 진동수 f = 1/(2π√(LC)) ≈ 5.0 Hz로 진동한다. 속도 0.1×에서 전압계를 선택해 보라.','1층과 2층이 층 연결 두 개로 이어져 있다. 3D 단추로 쌓인 모습을 보라.',''];
+const EXNOTE=['','스위치를 눌러 전구 하나를 껐다 켜 보세요.','왼쪽 스위치를 닫으면 충전되고, 그걸 연 다음 오른쪽 스위치를 닫으면 방전돼요. τ = RC = 1 s','LED 방향을 뒤집으면 전류가 흐르지 않아요.','스위치를 닫으면 전류가 서서히 늘어나요.','네 저항의 비가 맞으면 가운데 전류계가 0을 가리켜요. 오른쪽 아래 저항값을 바꿔 보세요.','실효값 10 V, 60 Hz를 권선비 1 : 0.5로 낮춰요. 계기 값이 자리 잡는 데 몇 주기가 걸려요.','속도를 0.01×로 하고 축전기를 선택하면 파형을 그래프로 볼 수 있어요.','왼쪽은 자석이 2 Hz로 왕복해서 기전력이 주기적으로 바뀌고, 오른쪽은 자속이 일정하게 줄어들어 일정한 기전력으로 전구가 켜져요. 코일을 선택하면 그래프를 볼 수 있어요.','축전기가 6 V로 충전된 다음 왼쪽 스위치를 열고 오른쪽 스위치를 닫으면 진동수 f = 1/(2π√(LC)) ≈ 5.0 Hz로 진동해요. 속도 0.1×에서 전압계를 선택해 보세요.','1층과 2층이 층 연결 두 개로 이어져 있어요. 3D 단추를 누르면 쌓인 모습을 볼 수 있어요.',''];
 function loadEx(i){pushUndo();cloudId=null;els=EX[i].d.map(([t,a,b,p])=>newEl(t,a,b,p));normalize();nL=1;curZ=0;fixLayers();resetState();select(null);if(mode3d)fit3d();else fit();changed();closeOv();if(EXNOTE[i])showHint(EXNOTE[i],6500);}
 function resetState(){simT=0;hist=[];sim.blown='';for(const e of els){e.s={vc:0,il:0,vd:0,i1:0,i2:0,blown:false};e.ph=0;e.ph2=0;e.rv=e.ri=e.rv2=e.ri2=0;}}
 
@@ -897,7 +897,7 @@ cv.addEventListener('pointermove',ev=>{
 });
 function placeOne(p){
   if(tool==='via'){
-    if(nL<2){showHint('층 연결은 층이 2개 이상일 때 쓴다. 왼쪽 위 더하기 단추로 층을 추가하라',4500);return;}
+    if(nL<2){showHint('층 연결은 층이 2개 이상일 때 써요. 왼쪽 위 더하기 단추로 층을 먼저 추가해 주세요',4500);return;}
     const z2=curZ+1<nL?curZ+1:curZ-1;
     pushUndo();els.push(newEl('via',p,p,{z:curZ,z2}));
   }else{pushUndo();els.push(newEl(tool,p,p,{z:curZ}));}
@@ -963,27 +963,27 @@ function showHint(txt,ms){const h=$('hint');h.textContent=txt;h.style.opacity=1;
 function setTool(t){
   tool=t;for(const b of toolsEl.children)b.classList.toggle('on',b.dataset.t===t);
   cv.style.cursor=t==='select'?'default':'crosshair';
-  if(t==='select')showHint(mode3d?'부품을 눌러 선택·편집하고, 끌어서 옮긴다. 빈 곳을 끌면 회전한다':'부품을 눌러 선택·편집하고, 끌어서 옮긴다. 빈 곳을 끌면 화면이 움직인다');
-  else if(t==='delete')showHint('지울 부품을 누른다');
-  else if(t==='ground')showHint('접지: 격자점을 누르면 놓인다. 모든 접지는 0 V인 같은 노드이다');
-  else if(t==='via')showHint(`층 연결: 격자점을 누르면 ${curZ+1}층과 ${curZ+1<nL?curZ+2:curZ}층이 그 점에서 이어진다`);
-  else if(t==='transformer')showHint('변압기: 끌어 놓은 선이 1차 코일이고, 2칸 옆에 2차 코일이 생긴다');
-  else showHint(`${T[t].nm}: 격자점에서 다른 격자점까지 끌어서 놓는다 (짧게 누르면 2칸)`);
+  if(t==='select')showHint(mode3d?'부품을 눌러 선택·편집하고, 끌어서 옮겨요. 빈 곳을 끌면 회전해요':'부품을 눌러 선택·편집하고, 끌어서 옮겨요. 빈 곳을 끌면 화면이 움직여요');
+  else if(t==='delete')showHint('지울 부품을 눌러 주세요');
+  else if(t==='ground')showHint('접지: 격자점을 누르면 놓여요. 모든 접지는 0 V인 같은 노드예요');
+  else if(t==='via')showHint(`층 연결: 격자점을 누르면 ${curZ+1}층과 ${curZ+1<nL?curZ+2:curZ}층이 그 점에서 이어져요`);
+  else if(t==='transformer')showHint('변압기: 끌어 놓은 선이 1차 코일이 되고, 2칸 옆에 2차 코일이 생겨요');
+  else showHint(`${T[t].nm}: 격자점에서 다른 격자점까지 끌어서 놓으세요 (짧게 누르면 2칸)`);
 }
 
 /* ================= 층 ================= */
 const PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 function buildLayers(){
   const L=$('layers');L.innerHTML='';
-  for(let z=0;z<nL;z++){const b=document.createElement('button');b.className='lc'+(z===curZ?' on':'');b.textContent=`${z+1}층`;b.onclick=()=>{curZ=z;select(null);buildLayers();if(!mode3d&&!els.some(e=>onLayer(e,z)))showHint(`${z+1}층은 비어 있다`);};L.appendChild(b);}
-  if(nL<8){const b=document.createElement('button');b.className='lc';b.title='층 추가';b.innerHTML=PLUS;b.onclick=()=>{nL++;curZ=nL-1;select(null);buildLayers();changed();showHint(`${nL}층을 추가했다. 층 연결 도구로 다른 층과 이어라`,4500);};L.appendChild(b);}
+  for(let z=0;z<nL;z++){const b=document.createElement('button');b.className='lc'+(z===curZ?' on':'');b.textContent=`${z+1}층`;b.onclick=()=>{curZ=z;select(null);buildLayers();if(!mode3d&&!els.some(e=>onLayer(e,z)))showHint(`${z+1}층은 비어 있어요`);};L.appendChild(b);}
+  if(nL<8){const b=document.createElement('button');b.className='lc';b.title='층 추가';b.innerHTML=PLUS;b.onclick=()=>{nL++;curZ=nL-1;select(null);buildLayers();changed();showHint(`${nL}층을 추가했어요. 층 연결 도구로 다른 층과 이어 주세요`,4500);};L.appendChild(b);}
 }
 $('bdellayer').onclick=()=>{
-  if(nL<2){showHint('층이 하나뿐이라 지울 수 없다');closeOv();return;}
+  if(nL<2){showHint('층이 하나뿐이라 지울 수 없어요');closeOv();return;}
   pushUndo();const z=curZ;
   els=els.filter(e=>!(e.z===z||(e.t==='via'&&e.z2===z)));
   for(const e of els){if(e.z>z)e.z--;if(e.t==='via'&&e.z2>z)e.z2--;}
-  nL--;curZ=Math.min(curZ,nL-1);select(null);buildLayers();changed();closeOv();showHint(`${z+1}층을 지웠다`);
+  nL--;curZ=Math.min(curZ,nL-1);select(null);buildLayers();changed();closeOv();showHint(`${z+1}층을 지웠어요`);
 };
 
 /* ================= 속성 창 ================= */
@@ -1000,22 +1000,22 @@ function toSl(v,d){return Math.round((Math.log10(v)-Math.log10(d.min))/(Math.log
 function fromSl(x,d){const v=Math.pow(10,Math.log10(d.min)+x/1000*(Math.log10(d.max)-Math.log10(d.min)));return Number(v.toPrecision(2));}
 const numRow=(id,lab,val,unit)=>`<label class="row"><span>${lab}</span><input id="${id}" class="num" inputmode="decimal" value="${fmtIn(val)}"><span class="u">${unit}</span></label>`;
 const NOTES={
-  battery:'b가 +극, a가 −극이다.',
-  acsource:'b가 +극이다. 기전력 ε(t) = V<sub>p</sub> sin(2πft)가 양수일 때 b의 전위가 a보다 높다.',
-  csource:'소자 안에서 a → b로 일정한 전류를 흘린다(화살표 방향).',
-  led:'a가 애노드(+), b가 캐소드(−)이다.',diode:'a가 애노드(+), b가 캐소드(−)이다.',
-  ammeter:'a가 +단자이다. a로 들어가 b로 나오는 전류를 양수로 표시한다.',voltmeter:'a가 +단자이다. V<sub>a</sub> − V<sub>b</sub>를 표시한다.',
-  transformer:'a, b는 1차 코일, c, d는 2차 코일의 끝이다. 점(•)이 찍힌 끝끼리 같은 극성이며, 방향 뒤집기를 누르면 2차 코일의 극성(감은 방향)이 반대로 바뀐다. v<sub>1</sub> = V<sub>a</sub> − V<sub>b</sub>, v<sub>2</sub> = V<sub>c</sub> − V<sub>d</sub>, i<sub>1</sub>은 a → b, i<sub>2</sub>는 c → d 방향 전류이다.',
-  emcoil:'기전력의 양의 방향을 코일 안 a → b로 잡고, 자속 Φ의 양의 방향은 이 방향으로 감긴 코일에 오른손 법칙을 적용해 정한다. 그러면 ε = −N dΦ/dt이고, ε > 0이면 b가 a보다 전위가 높다(b가 +극).',
-  ground:'모든 접지 기호는 층과 관계없이 하나의 노드이며, 그 전위를 0 V로 둔다.',
-  via:'두 층의 같은 격자점을 저항 0으로 잇는다.'
+  battery:'b가 +극, a가 −극이에요.',
+  acsource:'b가 +극이에요. 기전력 ε(t) = V<sub>p</sub> sin(2πft)가 양수일 때 b의 전위가 a보다 높아요.',
+  csource:'소자 안에서 a → b로 일정한 전류를 흘려요(화살표 방향).',
+  led:'a가 애노드(+), b가 캐소드(−)예요.',diode:'a가 애노드(+), b가 캐소드(−)예요.',
+  ammeter:'a가 +단자예요. a로 들어가 b로 나오는 전류를 양수로 표시해요.',voltmeter:'a가 +단자예요. V<sub>a</sub> − V<sub>b</sub>를 표시해요.',
+  transformer:'a, b는 1차 코일, c, d는 2차 코일의 끝이에요. 점(•)이 찍힌 끝끼리 극성이 같고, 방향 뒤집기를 누르면 2차 코일의 극성(감은 방향)이 반대로 바뀌어요. v<sub>1</sub> = V<sub>a</sub> − V<sub>b</sub>, v<sub>2</sub> = V<sub>c</sub> − V<sub>d</sub>, i<sub>1</sub>은 a → b, i<sub>2</sub>는 c → d 방향 전류예요.',
+  emcoil:'기전력의 양의 방향은 코일 안 a → b로, 자속 Φ의 양의 방향은 이 방향으로 감긴 코일에 오른손 법칙을 적용해 정해요. 그러면 ε = −N dΦ/dt이고, ε > 0이면 b가 a보다 전위가 높아요(b가 +극).',
+  ground:'모든 접지 기호는 층과 상관없이 하나의 노드이고, 전위를 0 V로 둬요.',
+  via:'두 층의 같은 격자점을 저항 0으로 이어요.'
 };
 function buildPanel(){
   if(!sel){panel.classList.add('hide');return;}
   panel.classList.remove('hide');
   const d=T[sel.t];$('pt').textContent=d.nm;
   $('pchip').textContent=nL>1?(sel.t==='via'?`${sel.z+1}층 – ${sel.z2+1}층`:`${sel.z+1}층`):'';
-  $('pnote').innerHTML=(NOTES[sel.t]?NOTES[sel.t]+' ':'')+(T[sel.t].one?'':'V = V<sub>a</sub> − V<sub>b</sub>, I는 소자 안에서 a → b 방향 전류이다(음수이면 반대 방향).');
+  $('pnote').innerHTML=(NOTES[sel.t]?NOTES[sel.t]+' ':'')+(T[sel.t].one?'':'V = V<sub>a</sub> − V<sub>b</sub>, I는 소자 안에서 a → b 방향 전류예요(음수면 반대 방향).');
   let h='';
   if(d.val!==undefined)h+=numRow('iv',d.lab,sel.v,d.unit)+`<input id="sv" type="range" min="0" max="1000" step="1" value="${toSl(sel.v,d)}">`;
   if(sel.t==='acsource')h+=numRow('if','주파수 f',sel.f,'Hz');
@@ -1034,7 +1034,7 @@ function buildPanel(){
   if(sel.t==='switch')h+=`<div class="btns"><button class="btn pri" id="itog">${sel.on?'스위치 열기':'스위치 닫기'}</button></div>`;
   if(sel.t==='ammeter'||sel.t==='voltmeter')h+=`<label class="row"><span>표시 값</span><select id="im"><option value="auto"${sel.mode==='auto'?' selected':''}>자동 (교류가 있으면 실효값)</option><option value="dc"${sel.mode==='dc'?' selected':''}>순간값</option><option value="rms"${sel.mode==='rms'?' selected':''}>실효값</option></select></label>`;
   if(sel.t==='via'&&nL>1)h+=`<label class="row"><span>이을 층 (${sel.z+1}층과)</span><select id="iz">${[...Array(nL).keys()].filter(z=>z!==sel.z).map(z=>`<option value="${z}"${z===sel.z2?' selected':''}>${z+1}층</option>`).join('')}</select></label>`;
-  if(/id="i(v|f|r|p|I|n|k|N|pm|dp|L)"/.test(h))h+='<div class="note">값은 4.7k, 100u(=100 µ), 2.2m처럼 접두어로도 입력할 수 있다.</div>';
+  if(/id="i(v|f|r|p|I|n|k|N|pm|dp|L)"/.test(h))h+='<div class="note">값은 4.7k, 100u(=100 µ), 2.2m처럼 접두어로도 입력할 수 있어요.</div>';
   $('pedit').innerHTML=h;
   const iv=$('iv'),sv=$('sv');
   if(iv){
@@ -1100,7 +1100,7 @@ function drawScope(){
   const d=Math.min(window.devicePixelRatio||1,2.5);if(sc.width!==Math.round(w*d)){sc.width=Math.round(w*d);sc.height=Math.round(h*d);}
   const c=sc.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,w,h);
   c.font=font(11,600);c.textBaseline='top';
-  if(hist.length<2){c.fillStyle='#6e7d91';c.textAlign='center';c.fillText(running?'측정 중…':'재생하면 시간에 따른 그래프가 그려진다',w/2,h/2-6);return;}
+  if(hist.length<2){c.fillStyle='#6e7d91';c.textAlign='center';c.fillText(running?'측정 중…':'재생하면 시간에 따른 그래프가 그려져요',w/2,h/2-6);return;}
   const q=quant(sel);
   const t0=hist[0].t,t1=hist[hist.length-1].t,dt=Math.max(1e-12,t1-t0);
   let mv=0,mi=0;for(const p of hist){mv=Math.max(mv,Math.abs(p.V));mi=Math.max(mi,Math.abs(p.I));}
@@ -1120,7 +1120,7 @@ function panelAct(a){
   if(!sel)return;pushUndo();
   if(a==='flip'){
     if(sel.t==='via'){[sel.z,sel.z2]=[sel.z2,sel.z];}
-    else if(sel.t==='transformer'){sel.pol=-(sel.pol||1);sel.s.i1=sel.s.i2=0;showHint('2차 코일의 감은 방향(극성)을 반대로 바꿨다');}
+    else if(sel.t==='transformer'){sel.pol=-(sel.pol||1);sel.s.i1=sel.s.i2=0;showHint('2차 코일의 감은 방향(극성)을 반대로 바꿨어요');}
     else if(!T[sel.t].one){[sel.a,sel.b]=[sel.b,sel.a];sel.s.vc=-sel.s.vc;sel.s.il=-sel.s.il;sel.s.vd=0;sel.s.i1=sel.s.i2=0;normalize();}
   }
   else if(a==='rot'){if(!T[sel.t].one){const dx=sel.b[0]-sel.a[0],dy=sel.b[1]-sel.a[1];sel.b=[sel.a[0]-dy,sel.a[1]+dx];sel.s.i1=sel.s.i2=0;normalize();}}
@@ -1140,7 +1140,7 @@ $('zin').onclick=()=>zoomAt(W/2,H/2,1.25);$('zout').onclick=()=>zoomAt(W/2,H/2,.
 function set3d(on){
   mode3d=on;const b=$('b3d');b.textContent=on?'2D':'3D';b.classList.toggle('on',on);b.title=on?'2D 편집으로 돌아가기':'3D 보기';
   act=null;
-  if(on){fit3d();showHint(`3D: 빈 곳을 끌면 회전, 두 손가락·휠로 확대한다. 편집은 파랗게 표시된 ${curZ+1}층에서 하며, 층은 왼쪽 위 단추로 바꾼다`,6000);}
+  if(on){fit3d();showHint(`3D: 빈 곳을 끌면 회전, 두 손가락이나 휠로 확대해요. 편집은 파랗게 표시된 ${curZ+1}층에서 하고, 층은 왼쪽 위 단추로 바꿔요`,6000);}
   else showHint(`${curZ+1}층 편집`);
   buildPanel();
 }
@@ -1173,21 +1173,21 @@ let sb=null,user=null,cloudId=null,cloudName='',cloudList=[],delArm=null,busy=fa
 try{if(window.supabase)sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});}catch(e){sb=null;}
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function amsg(t,err){const m=$('amsg');m.style.color=err?'#ff9b94':'#ffc247';m.textContent=t||'';}
-function errText(e){const m=(e&&e.message)||String(e);if(/Failed to fetch|NetworkError|Load failed/i.test(m))return'서버에 연결하지 못했다. 인터넷 연결을 확인하라 (claude.ai 미리보기 페이지에서는 외부 연결이 막혀 있으니 GitHub 사이트에서 써라)';if(/Invalid login credentials/i.test(m))return'이메일 또는 비밀번호가 틀렸다';if(/Email not confirmed/i.test(m))return'아직 이메일 인증을 하지 않았다. 받은 메일의 링크를 먼저 눌러라';if(/already registered/i.test(m))return'이미 가입된 이메일이다. 로그인하라';if(/Password should be/i.test(m))return'비밀번호는 6자 이상이어야 한다';return m;}
+function errText(e){const m=(e&&e.message)||String(e);if(/Failed to fetch|NetworkError|Load failed/i.test(m))return'서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요 (claude.ai 미리보기 페이지에서는 외부 연결이 막혀 있으니 GitHub 사이트에서 써 주세요)';if(/Invalid login credentials/i.test(m))return'이메일 또는 비밀번호가 틀렸어요';if(/Email not confirmed/i.test(m))return'아직 이메일 인증을 안 했어요. 받은 메일의 링크를 먼저 눌러 주세요';if(/already registered/i.test(m))return'이미 가입된 이메일이에요. 로그인해 주세요';if(/Password should be/i.test(m))return'비밀번호는 6자 이상이어야 해요';return m;}
 function updAcctBtn(){$('acctst').textContent=user?(user.email||'로그인됨'):'로그인 안 됨';}
 const fmtDate=iso=>{const d=new Date(iso),z=n=>String(n).padStart(2,'0');return`${String(d.getFullYear()).slice(2)}/${z(d.getMonth()+1)}/${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`;};
 function defName(){const d=new Date(),z=n=>String(n).padStart(2,'0');return`회로 ${z(d.getMonth()+1)}/${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`;}
 function renderAcct(){
   const b=$('acctbody');
-  if(!sb){b.innerHTML='<p class="note" style="font-size:13px">로그인 기능을 불러오지 못했다. 인터넷 연결을 확인하고 새로고침하라.</p>';return;}
+  if(!sb){b.innerHTML='<p class="note" style="font-size:13px">로그인 기능을 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.</p>';return;}
   if(!user){
-    b.innerHTML=`<p class="note" style="font-size:13px">카나미치·SEED 10K와 같은 계정으로 로그인한다. 로그인하면 만든 회로를 계정에 저장하고 다른 기기에서 불러올 수 있다.</p>
+    b.innerHTML=`<p class="note" style="font-size:13px">카나미치·SEED 10K와 같은 계정으로 로그인해요. 로그인하면 만든 회로를 계정에 저장하고 다른 기기에서 불러올 수 있어요.</p>
     <input class="ain" id="aem" type="email" autocomplete="email" placeholder="이메일">
     <input class="ain" id="apw" type="password" autocomplete="current-password" placeholder="비밀번호 (6자 이상)">
     <div class="btns"><button class="btn pri" data-act="in">로그인</button><button class="btn" data-act="up">회원가입</button></div>`;
     return;
   }
-  const rows=cloudList.length?cloudList.map(c=>`<div class="crow"><div class="nm"><b>${esc(c.name)}${c.id===cloudId?' <span style="color:#3fb6ff;font-size:11px">현재</span>':''}</b><small>${fmtDate(c.updated_at)}</small></div><button class="btn" data-act="load" data-id="${c.id}">불러오기</button><button class="btn danger" data-act="del" data-id="${c.id}">${delArm===c.id?'정말 삭제':'삭제'}</button></div>`).join(''):'<p class="note" style="font-size:13px">아직 저장한 회로가 없다.</p>';
+  const rows=cloudList.length?cloudList.map(c=>`<div class="crow"><div class="nm"><b>${esc(c.name)}${c.id===cloudId?' <span style="color:#3fb6ff;font-size:11px">현재</span>':''}</b><small>${fmtDate(c.updated_at)}</small></div><button class="btn" data-act="load" data-id="${c.id}">불러오기</button><button class="btn danger" data-act="del" data-id="${c.id}">${delArm===c.id?'정말 삭제':'삭제'}</button></div>`).join(''):'<p class="note" style="font-size:13px">아직 저장한 회로가 없어요.</p>';
   b.innerHTML=`<div class="kv"><span>로그인 계정</span><b>${esc(user.email||'')}</b></div>
   ${cloudId?`<div class="btns"><button class="btn pri" data-act="over">「${esc(cloudName)}」에 덮어쓰기</button></div>`:''}
   <input class="ain" id="anm" maxlength="60" placeholder="새로 저장할 이름" value="${esc(defName())}">
@@ -1197,7 +1197,7 @@ function renderAcct(){
 }
 async function refreshList(){
   const{data,error}=await sb.from('circuit_saves').select('id,name,updated_at').order('updated_at',{ascending:false});
-  if(error){amsg('목록을 불러오지 못했다: '+errText(error),true);return;}
+  if(error){amsg('목록을 불러오지 못했어요: '+errText(error),true);return;}
   cloudList=data||[];if(cloudId&&!cloudList.some(c=>c.id===cloudId))cloudId=null;renderAcct();
 }
 const cloudData=()=>({v:2,nL,els:els.map(ser)});
@@ -1206,25 +1206,25 @@ async function acctAct(a,id){
   try{
     if(a==='in'||a==='up'){
       const email=$('aem').value.trim(),password=$('apw').value;
-      if(!email||!password){amsg('이메일과 비밀번호를 모두 입력하라',true);return;}
-      if(a==='in'){const{error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;amsg('로그인했다');}
-      else{const{data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});if(error)throw error;amsg(data.session?'가입하고 로그인했다':'확인 메일을 보냈다. 메일의 링크를 누른 뒤 로그인하라');}
-    }else if(a==='out'){await sb.auth.signOut();cloudId=null;amsg('로그아웃했다');}
+      if(!email||!password){amsg('이메일과 비밀번호를 모두 입력해 주세요',true);return;}
+      if(a==='in'){const{error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;amsg('로그인했어요');}
+      else{const{data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});if(error)throw error;amsg(data.session?'가입하고 로그인했어요':'확인 메일을 보냈어요. 메일의 링크를 누른 다음 로그인해 주세요');}
+    }else if(a==='out'){await sb.auth.signOut();cloudId=null;amsg('로그아웃했어요');}
     else if(a==='new'){
       const name=($('anm').value||'').trim().slice(0,60)||defName();
       const{data,error}=await sb.from('circuit_saves').insert({name,data:cloudData()}).select('id,name').single();if(error)throw error;
-      cloudId=data.id;cloudName=data.name;amsg(`「${name}」 이름으로 저장했다`);await refreshList();
+      cloudId=data.id;cloudName=data.name;amsg(`「${name}」 이름으로 저장했어요`);await refreshList();
     }else if(a==='over'){
       const{error}=await sb.from('circuit_saves').update({data:cloudData(),updated_at:new Date().toISOString()}).eq('id',cloudId);if(error)throw error;
-      amsg(`「${cloudName}」에 덮어썼다`);await refreshList();
+      amsg(`「${cloudName}」에 덮어썼어요`);await refreshList();
     }else if(a==='load'){
       const{data,error}=await sb.from('circuit_saves').select('id,name,data').eq('id',id).single();if(error)throw error;
       pushUndo();els=fromList((data.data&&data.data.els)||[]);nL=Math.max(1,(data.data&&data.data.nL)||1);curZ=0;fixLayers();normalize();resetState();select(null);
-      if(mode3d)fit3d();else fit();changed();cloudId=data.id;cloudName=data.name;amsg('');closeOv();showHint(`「${data.name}」 회로를 불러왔다`);
+      if(mode3d)fit3d();else fit();changed();cloudId=data.id;cloudName=data.name;amsg('');closeOv();showHint(`「${data.name}」 회로를 불러왔어요`);
     }else if(a==='del'){
-      if(delArm!==id){delArm=id;amsg('한 번 더 누르면 삭제된다');renderAcct();return;}
+      if(delArm!==id){delArm=id;amsg('한 번 더 누르면 삭제돼요');renderAcct();return;}
       const{error}=await sb.from('circuit_saves').delete().eq('id',id);if(error)throw error;
-      delArm=null;if(cloudId===id)cloudId=null;amsg('삭제했다');await refreshList();
+      delArm=null;if(cloudId===id)cloudId=null;amsg('삭제했어요');await refreshList();
     }
   }catch(e){amsg(errText(e),true);}
   finally{busy=false;if(a!=='del')delArm=null;renderAcct();}
@@ -1249,16 +1249,16 @@ async function initAuth(){
 let lastW='';
 function warnings(){
   const w=new Set();
-  if(!sim.ok)w.add('회로 방정식을 풀 수 없다. 부품 연결을 확인하라');
-  for(const e of els)if(e.t==='fuse'&&e.s.blown){w.add(`⚠ 퓨즈가 끊어졌다 (정격 ${fmt(e.Ir,'A',true)}). 퓨즈를 눌러 교체하라`);break;}
-  if(sim.coarse)w.add('⚠ 회로가 빠르게 변해(교류 주파수나 LC 공진 주파수가 높음) 이 속도에서는 계산이 부정확할 수 있다. 속도 배율을 낮춰라');
+  if(!sim.ok)w.add('회로 방정식을 풀 수 없어요. 부품 연결을 확인해 주세요');
+  for(const e of els)if(e.t==='fuse'&&e.s.blown){w.add(`⚠ 퓨즈가 끊어졌어요 (정격 ${fmt(e.Ir,'A',true)}). 퓨즈를 눌러 교체해 주세요`);break;}
+  if(sim.coarse)w.add('⚠ 회로가 빠르게 변해서(교류 주파수나 LC 공진 주파수가 높음) 이 속도에서는 계산이 부정확할 수 있어요. 속도 배율을 낮춰 주세요');
   for(const e of els){
-    if((e.t==='battery'||e.t==='acsource'||e.t==='emcoil')&&Math.abs(e.I)>5)w.add(`⚠ ${T[e.t].nm}에 ${fmt(Math.abs(e.I),'A')}의 큰 전류: 단락(쇼트)이 의심된다`);
-    if(e.t==='led'&&e.I>0.03)w.add(`⚠ LED 과전류 ${fmt(e.I,'A')}: 직렬 저항을 넣어라`);
-    if(e.t==='led'&&e.V<-5)w.add(`⚠ LED 역방향 전압 ${fmt(e.V,'V')}: 실제 LED는 약 5 V 이상에서 손상될 수 있다`);
-    if(e.t==='bulb'&&e.V*e.I>1.5*e.P)w.add('⚠ 전구 과부하: 정격 전력의 1.5배를 넘었다');
+    if((e.t==='battery'||e.t==='acsource'||e.t==='emcoil')&&Math.abs(e.I)>5)w.add(`⚠ ${T[e.t].nm}에 ${fmt(Math.abs(e.I),'A')}의 큰 전류: 단락(쇼트)이 의심돼요`);
+    if(e.t==='led'&&e.I>0.03)w.add(`⚠ LED 과전류 ${fmt(e.I,'A')}: 직렬 저항을 넣어 주세요`);
+    if(e.t==='led'&&e.V<-5)w.add(`⚠ LED 역방향 전압 ${fmt(e.V,'V')}: 실제 LED는 약 5 V 이상에서 망가질 수 있어요`);
+    if(e.t==='bulb'&&e.V*e.I>1.5*e.P)w.add('⚠ 전구 과부하: 정격 전력의 1.5배를 넘었어요');
   }
-  if(sim.V)for(let i=0;i<sim.V.length;i++)if(Math.abs(sim.V[i])>1e4){w.add('⚠ 10 kV가 넘는 전압이 계산되었다: 코일·변압기 전류가 갑자기 끊겼거나, 전류원이 열린 회로에 연결되었다');break;}
+  if(sim.V)for(let i=0;i<sim.V.length;i++)if(Math.abs(sim.V[i])>1e4){w.add('⚠ 10 kV가 넘는 전압이 계산됐어요: 코일·변압기 전류가 갑자기 끊겼거나, 전류원이 열린 회로에 연결됐어요');break;}
   const s=[...w].join('|');
   if(s!==lastW){lastW=s;$('warn').innerHTML=[...w].map(x=>`<div>${x}</div>`).join('');}
 }
@@ -1313,7 +1313,7 @@ fit();
 buildLayers();
 setTool('select');
 initAuth();
-setTimeout(()=>showHint('아래에서 부품을 골라 격자점 사이를 끌면 회로가 만들어진다. 메뉴에 예제와 계산 원리가 있다',5000),400);
+setTimeout(()=>showHint('아래에서 부품을 골라 격자점 사이를 끌면 회로가 만들어져요. 메뉴에 예제와 계산 원리가 있어요',5000),400);
 requestAnimationFrame(frame);
 })();
 </script>
